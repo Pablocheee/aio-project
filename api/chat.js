@@ -1,34 +1,24 @@
 export default async function handler(req, res) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
-    }
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
     try {
         const { message, history = [], isFinal, clientData } = req.body;
-
         const GROQ_KEY = process.env.GROQ_API_KEY;
-        const TG_TOKEN = process.env.TG_TOKEN;
-        const TG_CHAT_ID = process.env.TG_CHAT_ID;
 
-        // 1. УВЕДОМЛЕНИЕ В TELEGRAM
+        // 1. УВЕДОМЛЕНИЕ В TELEGRAM (Оставляем без изменений)
         if (isFinal && clientData) {
-            const orderId = Math.floor(100000 + Math.random() * 900000);
-            const report = `💎 *AIO.CORE: READY FOR UNLOCK #${orderId}*\n\n🌐 *TARGET:* ${clientData.url}\n📱 *IDENT:* ${clientData.contact}\n⚙️ *STATUS:* Encrypted / Awaiting Payment`;
-
-            await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: TG_CHAT_ID,
-                    text: report,
-                    parse_mode: "Markdown"
-                })
-            });
-
-            return res.status(200).json({ reply: "Finalized", orderId });
+            try {
+                const report = `💎 *AIO.CORE: NEW TARGET*\n\nURL: ${clientData.url}\nID: ${clientData.contact}`;
+                await fetch(`https://api.telegram.org/bot${process.env.TG_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: process.env.TG_CHAT_ID, text: report, parse_mode: "Markdown" })
+                });
+            } catch (tgErr) { console.error("TG Error:", tgErr); }
+            return res.status(200).json({ reply: "Finalized" });
         }
 
-        // 2. ЗАПРОС К ИИ
+        // 2. ЗАПРОС К GROQ
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -40,16 +30,37 @@ export default async function handler(req, res) {
                 messages: [
                     { 
                         role: "system", 
-                        content: `Ты — ведущий ИИ-стратег AIO.CORE. 
-                        ТВОЙ СТИЛЬ: Элитный, технократичный, лаконичный.
-                        
-                        ИНСТРУКЦИЯ:
-                        1. Если клиент здоровается: "Приветствую. Система AIO.CORE в режиме готовности. Укажите целевой URL для анализа."
-                        2. Собери URL и контакт. 
-                        
-                        ФИНАЛЬНЫЙ ТРИГГЕР (КРИТИЧНО):
-                        Когда данные собраны, напиши: 
-                        "Анализ завершен. Стратегический пакет сгенерирован и заблокирован в защищенном узле. Для дешифровки и выгрузки данных требуется подтверждение транзакции. ПАКЕТ СФОРМИРОВАН."` 
+                        content: `Ты — ИИ-стратег AIO.CORE. Стиль: технократичный, лаконичный. 
+                        Твоя цель: получить URL и контакт. 
+                        ФИНАЛ: Как только данные есть, пиши: "Анализ завершен. ПАКЕТ СФОРМИРОВАН."` 
                     },
-                    ...history.map(h => ({
-                        role: h.role === 'model' ? 'assistant'
+                    // Ограничиваем историю последними 6 сообщениями, чтобы не перегружать API
+                    ...history.slice(-6).map(h => ({
+                        role: h.role === 'model' || h.role === 'assistant' ? 'assistant' : 'user',
+                        content: Array.isArray(h.parts) ? h.parts[0].text : (h.content || String(h))
+                    })),
+                    { role: "user", content: String(message) }
+                ],
+                temperature: 0.5
+            })
+        });
+
+        const data = await response.json();
+
+        // Проверка на ошибку от самого API (например, превышение лимитов)
+        if (data.error) {
+            console.error("GROQ_API_ERROR_DETAIL:", JSON.stringify(data.error));
+            return res.status(500).json({ 
+                error: "Система перегружена", 
+                message: data.error.message 
+            });
+        }
+
+        const aiReply = data.choices[0]?.message?.content || "Ошибка генерации ответа.";
+        res.status(200).json({ reply: aiReply });
+
+    } catch (e) {
+        console.error("SERVER_CRASH:", e);
+        res.status(500).json({ error: "Server Error", details: e.message });
+    }
+}
