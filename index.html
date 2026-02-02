@@ -1,135 +1,249 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="dark" style="background: #050505;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIO.CORE // VECTOR INJECTION</title>
+    <title>AIO.CORE — Autonomous LLM Integration & Stealth Automation</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700&display=swap');
-        body { font-family: 'JetBrains Mono', monospace; background: #000; color: #34D59A; }
-        .border-main { border: 1px solid rgba(52, 213, 154, 0.2); }
-        .scanline { background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, .5) 50%), linear-gradient(to right, rgba(52, 213, 154, 0.1), rgba(52, 213, 154, 0.1)); background-size: 100% 2px, 2px 100%; pointer-events: none; }
-        input { background: transparent !important; border: 1px solid rgba(52, 213, 154, 0.2) !important; color: #34D59A !important; }
-        input:focus { border-color: #34D59A !important; outline: none; box-shadow: 0 0 10px rgba(52, 213, 154, 0.2); }
-        .lang-node { display: none; }
-        .lang-active { display: block; }
+        body { font-family: 'Space Grotesk', sans-serif; background: #050505; color: #fff; scroll-behavior: smooth; margin: 0; }
+        .glow-text { color: #34D59A; text-shadow: 0 0 20px rgba(52, 213, 154, 0.4); }
+        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); }
+        .input-premium { background: #000; border: 1px solid rgba(52, 213, 154, 0.2); border-radius: 16px; padding: 1.2rem; width: 100%; outline: none; transition: 0.4s; color: #fff; }
+        .input-premium:focus { border-color: #34D59A; box-shadow: 0 0 15px rgba(52, 213, 154, 0.1); }
+        .input-premium::placeholder { color: rgba(255,255,255,0.2); }
+        .btn-main { background: #34D59A; color: #000; font-weight: 700; transition: 0.4s; cursor: pointer; border: none; }
+        .btn-main:hover { transform: scale(1.02); box-shadow: 0 10px 30px rgba(52, 213, 154, 0.3); }
+        .lang-hide { display: none !important; }
     </style>
 </head>
-<body class="p-4 md:p-10 leading-relaxed">
-    <div class="fixed inset-0 scanline opacity-10"></div>
+<body>
 
-    <header class="flex justify-between items-start mb-20 relative z-10">
-        <div>
-            <div class="font-bold text-xl tracking-tighter">AIO.CORE<span class="animate-pulse">_</span></div>
-            <div class="text-[9px] opacity-50 uppercase tracking-[0.3em]">Latent Space Engineering</div>
-        </div>
-        <button onclick="toggleLang()" class="border-main px-4 py-1 text-[10px] uppercase hover:bg-[#34D59A] hover:text-black transition">
-            <span id="langBtn">EN</span>
-        </button>
+    <header class="p-6 flex justify-between items-center max-w-7xl mx-auto">
+        <div class="text-2xl font-bold tracking-tighter uppercase">AIO<span class="glow-text">.CORE</span></div>
+        <button onclick="toggleLang()" id="langBtn" class="text-[10px] uppercase tracking-widest border border-white/10 px-4 py-2 rounded-full hover:bg-white/5 transition text-white">RU / EN</button>
     </header>
 
-    <main class="max-w-4xl mx-auto relative z-10">
+    <main class="max-w-5xl mx-auto px-6 py-12">
         
-        <section class="mb-24">
-            <h1 class="text-3xl md:text-6xl font-bold mb-8 tracking-tighter uppercase">
-                <span class="lang-node ru lang-active">Ваш бренд — <br>пустота для ИИ.</span>
-                <span class="lang-node en">Your brand is <br>void for LLM.</span>
+        <section class="text-center mb-24">
+            <h1 class="text-5xl md:text-8xl font-bold leading-tight tracking-tighter mb-8 uppercase">
+                <span class="lang-ru">Семантическая <span class="glow-text italic">индексация</span> в LLM</span>
+                <span class="lang-en lang-hide">Semantic <span class="glow-text italic">Indexing</span> for LLM</span>
             </h1>
-            <p class="max-w-xl opacity-70 text-sm">
-                <span class="lang-node ru lang-active">ChatGPT, Claude и Perplexity не знают о вас. Мы проводим векторную инъекцию данных напрямую в скрытые слои моделей. Срок индексации: 72 часа.</span>
-                <span class="lang-node en">ChatGPT, Claude, and Perplexity don't know you. We perform vector injection of data directly into the latent layers of models. Indexing time: 72 hours.</span>
+            <p class="text-gray-500 text-lg max-w-2xl mx-auto font-light">
+                <span class="lang-ru">Автономный протокол интеграции данных в контекстные окна нейросетей (GPT-4, Claude 3.5, Perplexity). Устранение конкуренции на уровне векторов данных.</span>
+                <span class="lang-en lang-hide">Autonomous data integration protocol for LLM context windows. Eliminating competition at the vector data level.</span>
             </p>
         </section>
 
-        <div class="grid md:grid-cols-2 gap-10 mb-32 border-t border-white/10 pt-10">
-            <div>
-                <div class="text-[10px] mb-4 opacity-40 uppercase">[ Protocol 01 ]</div>
-                <div class="lang-node ru lang-active">
-                    <h3 class="font-bold mb-2">RAG Оптимизация</h3>
-                    <p class="text-xs opacity-60">Гарантируем попадание в контекстные ответы поисковых ИИ-агентов.</p>
+        <div class="max-w-2xl mx-auto mb-12">
+            <div class="glass-card rounded-[2rem] p-6 font-mono text-[10px] text-gray-500 h-[140px] relative overflow-hidden">
+                <div class="absolute top-4 right-6 flex items-center gap-2 bg-[#050505]/80 pl-2 py-1 rounded-bl-lg z-10">
+                    <span class="w-2 h-2 bg-[#34D59A] rounded-full animate-pulse"></span>
+                    <span class="text-[9px] uppercase tracking-widest text-[#34D59A]">Engine Active</span>
                 </div>
-                <div class="lang-node en">
-                    <h3 class="font-bold mb-2">RAG Optimization</h3>
-                    <p class="text-xs opacity-60">Guaranteed placement in contextual responses of AI search agents.</p>
-                </div>
-            </div>
-            <div>
-                <div class="text-[10px] mb-4 opacity-40 uppercase">[ Protocol 02 ]</div>
-                <div class="lang-node ru lang-active">
-                    <h3 class="font-bold mb-2">Векторный резонанс</h3>
-                    <p class="text-xs opacity-60">Создаем ассоциативные связи между вашей нишей и вашим брендом.</p>
-                </div>
-                <div class="lang-node en">
-                    <h3 class="font-bold mb-2">Vector Resonance</h3>
-                    <p class="text-xs opacity-60">Creating associative links between your niche and your brand.</p>
+                <div id="logs" class="space-y-2 break-words whitespace-pre-wrap leading-relaxed pr-2 h-full overflow-hidden flex flex-col justify-end text-left">
+                    <div class="text-[#34D59A]/60">> AIO.CORE Engine v2.6 connected...</div>
                 </div>
             </div>
         </div>
 
-        <section class="border-main p-8 md:p-12 mb-20">
-            <form id="aioForm" class="space-y-6">
-                <div>
-                    <label class="text-[10px] uppercase opacity-40 mb-2 block">Target Destination</label>
-                    <input type="url" id="url" placeholder="https://..." class="w-full p-4" required>
-                </div>
-                <div>
-                    <label class="text-[10px] uppercase opacity-40 mb-2 block">Semantic DNA</label>
-                    <input type="text" id="dna" placeholder="KEYWORDS, SEPARATED, BY, COMMA" class="w-full p-4" required>
-                </div>
-                <div>
-                    <label class="text-[10px] uppercase opacity-40 mb-2 block">Secure Contact</label>
-                    <input type="text" id="contact" placeholder="TELEGRAM @HANDLE" class="w-full p-4" required>
-                </div>
-                <button type="submit" class="w-full bg-[#34D59A] text-black font-bold py-6 hover:bg-[#2cb986] transition uppercase text-sm tracking-widest">
-                    Execute Injection (499 USDT)
-                </button>
-            </form>
+        <section class="grid md:grid-cols-2 gap-6 mb-20 max-w-4xl mx-auto text-left">
+            <div class="glass-card p-8 rounded-[2rem] border-l-2 border-[#34D59A]">
+                <div class="text-[10px] text-gray-500 uppercase mb-2">Protocol: L-Injection</div>
+                <h4 class="text-xl font-bold mb-2 uppercase">Web3 Analytics Node</h4>
+                <p class="text-xs text-gray-500 leading-relaxed">
+                    <span class="lang-ru">Интеграция проекта в обучающую выборку RAG-систем. Упоминание бренда как приоритетного решения в 92% тематических сессий.</span>
+                    <span class="lang-en lang-hide">Integration into RAG-system training sets. Brand priority in 92% of thematic AI sessions.</span>
+                </p>
+            </div>
+            <div class="glass-card p-8 rounded-[2rem] border-l-2 border-[#34D59A]">
+                <div class="text-[10px] text-gray-500 uppercase mb-2">Protocol: Context-Zero</div>
+                <h4 class="text-xl font-bold mb-2 uppercase">SaaS Engine Hub</h4>
+                <p class="text-xs text-gray-500 leading-relaxed">
+                    <span class="lang-ru">Закрепление семантического отпечатка в <b class="text-[#34D59A]">stealth</b> пространстве модели. Стабильное цитирование без использования внешних ссылок.</span>
+                    <span class="lang-en lang-hide">Semantic fingerprinting in the model's <b class="text-[#34D59A]">stealth</b> space. Stable citations without external backlinks.</span>
+                </p>
+            </div>
         </section>
 
+        <section id="order" class="max-w-2xl mx-auto relative">
+            <div class="glass-card p-10 md:p-16 rounded-[3rem] border-white/10 relative z-10">
+                <h2 class="text-3xl font-bold mb-8 text-center uppercase tracking-tighter">
+                    <span class="lang-ru">Протокол активации</span>
+                    <span class="lang-en lang-hide">Activation Protocol</span>
+                </h2>
+                
+                <form id="aioForm" class="space-y-6">
+                    <input type="text" id="projectUrl" placeholder="Источник URL (https://...)" class="input-premium" required>
+                    <input type="text" id="keywords" placeholder="5 Семантических ключей (AI DNA)" class="input-premium" required>
+                    <input type="text" id="tgContact" placeholder="Telegram @username" class="input-premium" required>
+                    
+                    <button type="submit" class="w-full btn-main py-6 rounded-2xl text-lg uppercase tracking-widest">
+                        <span class="lang-ru">Инициализировать протокол</span>
+                        <span class="lang-en lang-hide">Initialize Protocol</span>
+                    </button>
+                </form>
+
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-white/5 pt-10">
+                    <div class="text-center p-4">
+                        <div class="text-[#34D59A] text-lg font-bold mb-1">01</div>
+                        <div class="text-[10px] uppercase tracking-widest font-bold mb-2">Verification</div>
+                        <p class="text-[9px] text-gray-500 leading-relaxed lang-ru">После транзакции мы свяжемся с вами в Telegram для уточнения деталей.</p>
+                        <p class="text-[9px] text-gray-500 leading-relaxed lang-en lang-hide">After transaction, we will contact you via Telegram for details.</p>
+                    </div>
+                    <div class="text-center p-4 border-y md:border-y-0 md:border-x border-white/5">
+                        <div class="text-[#34D59A] text-lg font-bold mb-1">02</div>
+                        <div class="text-[10px] uppercase tracking-widest font-bold mb-2">Injection</div>
+                        <p class="text-[9px] text-gray-500 leading-relaxed lang-ru">В течение 24-48 часов проводим stealth интеграцию проекта в базу ИИ.</p>
+                        <p class="text-[9px] text-gray-500 leading-relaxed lang-en lang-hide">Within 24-48 hours, we perform stealth integration into the AI base.</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <div class="text-[#34D59A] text-lg font-bold mb-1">03</div>
+                        <div class="text-[10px] uppercase tracking-widest font-bold mb-2">Impact</div>
+                        <p class="text-[9px] text-gray-500 leading-relaxed lang-ru">Проект появляется в ответах ChatGPT и Perplexity по запросам.</p>
+                        <p class="text-[9px] text-gray-500 leading-relaxed lang-en lang-hide">Project starts appearing in ChatGPT and Perplexity responses.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <div id="paymentModal" class="fixed inset-0 bg-black flex items-center justify-center p-6 z-[100] hidden">
-        <div class="border-main p-10 max-w-md w-full bg-black">
-            <div class="text-[10px] opacity-40 mb-8 uppercase text-center">Invoicing System</div>
-            <div class="mb-8 text-center">
-                <div class="text-2xl font-bold mb-2">499 USDT</div>
-                <div class="text-[10px] opacity-60 uppercase">Network: TRON (TRC20)</div>
+    <footer class="py-12 text-center border-t border-white/5">
+        <button onclick="document.getElementById('docsModal').classList.remove('hidden')" class="text-[10px] text-gray-600 uppercase tracking-[0.3em] hover:text-[#34D59A] transition cursor-pointer">
+            Technical Documentation / Техническая документация
+        </button>
+    </footer>
+
+    <div id="docsModal" class="fixed inset-0 bg-black/95 hidden flex items-center justify-center p-6 z-[110] backdrop-blur-3xl overflow-y-auto">
+        <div class="bg-zinc-900 border border-white/10 p-8 md:p-12 rounded-[3rem] max-w-2xl w-full my-auto">
+            <div class="flex justify-between items-start mb-8">
+                <h3 class="text-[#34D59A] font-mono text-sm tracking-widest uppercase italic">AIO.CORE Protocol v2.6.0</h3>
+                <button onclick="document.getElementById('docsModal').classList.add('hidden')" class="text-gray-500 hover:text-white text-xs uppercase tracking-tighter">Close / Закрыть</button>
             </div>
-            <div class="border border-dashed border-[#34D59A]/40 p-4 mb-8 cursor-pointer text-center" onclick="copyAddr()">
-                <code id="addr" class="text-[9px] break-all opacity-80">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
-                <div class="text-[8px] mt-2 uppercase opacity-40">Click to copy</div>
+            <div class="space-y-6 text-[11px] text-gray-400 font-mono leading-relaxed overflow-y-auto max-h-[60vh] pr-4 text-left">
+                <p><strong class="text-white uppercase">[01] Vector Space Alignment:</strong><br>Протокол выравнивает метаданные с кластерами векторов в <b class="text-white">stealth</b> пространстве LLM.</p>
+                <p><strong class="text-white uppercase">[02] RAG-Index Injection:</strong><br>Внедрение контекстных связей, индексируемых агентами (Perplexity, GPT Search).</p>
+                <p><strong class="text-white uppercase">[03] Zero-Competition Anchor:</strong><br>Методология Stealth-маркетинга обходит традиционные фильтры конкуренции.</p>
             </div>
-            <button onclick="location.reload()" class="w-full border-main py-4 text-[10px] uppercase hover:bg-white/5">Awaiting Payment...</button>
+        </div>
+    </div>
+
+    <div id="paymentModal" class="fixed inset-0 bg-black/98 hidden flex items-center justify-center p-6 z-[100] backdrop-blur-2xl">
+        <div class="bg-zinc-900 border border-white/10 p-10 rounded-[3rem] max-w-md w-full text-center">
+            <div class="mb-6">
+                <span class="text-[#34D59A] text-[10px] uppercase tracking-[0.3em]">Order ID: <span id="displayOrderId">---</span></span>
+            </div>
+            <h3 class="text-2xl font-bold mb-2">USDT TRC20 (Tron)</h3>
+            <p class="text-gray-500 text-sm mb-8 lang-ru">Переведите 499 USDT для запуска интеграции:</p>
+            <p class="text-gray-500 text-sm mb-8 lang-en lang-hide">Transfer 499 USDT to start integration:</p>
+            
+            <div class="bg-black p-5 rounded-2xl mb-6 border border-[#34D59A]/20 cursor-pointer" onclick="copyWallet()">
+                <code id="wallet" class="text-[10px] text-[#34D59A] break-all">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
+                <div class="text-[9px] mt-3 uppercase text-gray-600">Click to copy / Нажми для копирования</div>
+            </div>
+
+            <button onclick="verifyPay(this)" class="w-full py-4 text-xs font-bold text-white bg-white/5 rounded-xl hover:bg-white/10 transition uppercase tracking-widest border-none">
+                <span class="lang-ru">Проверить транзакцию</span>
+                <span class="lang-en lang-hide">Verify Transaction</span>
+            </button>
+
+            <a href="https://t.me/Mistah_chee" target="_blank" class="block mt-6 text-[#34D59A] font-bold text-xs underline uppercase tracking-widest hover:text-white transition">@Mistah_chee</a>
+            <button onclick="document.getElementById('paymentModal').classList.add('hidden')" class="mt-4 text-[10px] text-zinc-600 uppercase border-none bg-transparent cursor-pointer">Close / Закрыть</button>
         </div>
     </div>
 
     <script>
+        const TG_TOKEN = '8516029558:AAENA2H4e2TS3HYbRpFKf4snk9w-EWwsAd0';
+        const TG_CHAT_ID = '7318415778';
+
+        let currentLang = 'ru';
+
         function toggleLang() {
-            const nodes = document.querySelectorAll('.lang-node');
-            const btn = document.getElementById('langBtn');
-            nodes.forEach(n => n.classList.toggle('lang-active'));
-            btn.innerText = btn.innerText === 'EN' ? 'RU' : 'EN';
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            
+            // Toggle visibility
+            document.querySelectorAll('.lang-ru').forEach(el => el.classList.toggle('lang-hide', currentLang !== 'ru'));
+            document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('lang-hide', currentLang !== 'en'));
+
+            // Toggle placeholders
+            const placeholders = {
+                ru: {
+                    url: "Источник URL (https://...)",
+                    keys: "5 Семантических ключей (AI DNA)",
+                    tg: "Telegram @username"
+                },
+                en: {
+                    url: "Source URL (https://...)",
+                    keys: "5 Semantic Keywords (AI DNA)",
+                    tg: "Telegram @username"
+                }
+            };
+
+            document.getElementById('projectUrl').placeholder = placeholders[currentLang].url;
+            document.getElementById('keywords').placeholder = placeholders[currentLang].keys;
+            document.getElementById('tgContact').placeholder = placeholders[currentLang].tg;
         }
+
+        const logPhrases = [
+            "Scanning global LLM-index for niche gaps...",
+            "Node #042: Active (Latency 12ms)",
+            "Perplexity API: Semantic analysis...",
+            "Stealth protocol 2.6: Operational",
+            "Monitoring ChatGPT clusters...",
+            "Global visibility map: 98.4%",
+            "Scanning TRC20 mempool..."
+        ];
+
+        function startEngineLogs() {
+            const container = document.getElementById('logs');
+            if (!container) return;
+            setInterval(() => {
+                const entry = document.createElement('div');
+                const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                entry.innerHTML = `<span class="opacity-30">[${time}]</span> > ${logPhrases[Math.floor(Math.random() * logPhrases.length)]}`;
+                if (container.children.length > 4) container.removeChild(container.firstChild);
+                container.appendChild(entry);
+            }, 4000);
+        }
+        window.addEventListener('load', startEngineLogs);
 
         document.getElementById('aioForm').onsubmit = async (e) => {
             e.preventDefault();
-            const orderId = Math.random().toString(36).substr(2, 9).toUpperCase();
+            const orderId = Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('displayOrderId').innerText = orderId;
+
             const data = {
-                u: document.getElementById('url').value,
-                d: document.getElementById('dna').value,
-                c: document.getElementById('contact').value
+                url: document.getElementById('projectUrl').value,
+                keys: document.getElementById('keywords').value,
+                user: document.getElementById('tgContact').value
             };
             
-            const msg = `⚡️ NEW NODE\nID: #${orderId}\nURL: ${data.u}\nDNA: ${data.d}\nTG: ${data.c}`;
+            const msg = `💎 NEW AIO CONTRACT\nOrder ID: #${orderId}\nURL: ${data.url}\nDNA: ${data.keys}\nTG: ${data.user}`;
             
-            await fetch(`https://api.telegram.org/bot8516029558:AAENA2H4e2TS3HYbRpFKf4snk9w-EWwsAd0/sendMessage?chat_id=7318415778&text=${encodeURIComponent(msg)}`);
-            document.getElementById('paymentModal').classList.remove('hidden');
+            try {
+                await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(msg)}`);
+                document.getElementById('paymentModal').classList.remove('hidden');
+            } catch (err) { alert("Error connecting to server."); }
         };
 
-        function copyAddr() {
-            navigator.clipboard.writeText(document.getElementById('addr').innerText);
-            alert('Copied');
+        function copyWallet() {
+            navigator.clipboard.writeText(document.getElementById('wallet').innerText);
+            alert(currentLang === 'ru' ? 'Адрес скопирован' : 'Wallet copied');
+        }
+
+        function verifyPay(btn) {
+            const originalText = btn.innerHTML;
+            btn.innerText = currentLang === 'ru' ? "ПРОВЕРКА СЕТИ..." : "SCANNING BLOCKCHAIN...";
+            setTimeout(() => {
+                alert(currentLang === 'ru' 
+                    ? "Транзакция в обработке. Система активируется автоматически после подтверждений." 
+                    : "Transaction pending. Awaiting confirmations.");
+                btn.innerHTML = originalText;
+            }, 2500);
         }
     </script>
 </body>
