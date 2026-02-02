@@ -100,8 +100,6 @@
     </div>
 
     <script>
-const TG_TOKEN = '8516029558:AAENA2H4e2TS3HYbRpFKf4snk9w-EWwsAd0';
-const TG_CHAT_ID = '7318415778';
 let currentLang = 'ru';
 let chatStep = 0;
 let clientData = { url: "", niche: "", goal: "", contact: "" };
@@ -152,39 +150,64 @@ async function runAnalysis(btn) {
     }
 }
 
-// --- AI CHAT WORKER LOGIC ---
-function handleChat() {
+let chatHistory = []; // Добавь это в начало скрипта, если еще нет
+
+async function handleChat() {
     const input = document.getElementById('chatInput');
     const chat = document.getElementById('aiChat');
-    const val = input.value.trim();
-    if(!val) return;
+    const userMsg = input.value.trim();
+    
+    if(!userMsg) return;
 
-    chat.innerHTML += `<div class="text-gray-500 mt-2 italic">> User: ${val}</div>`;
+    // 1. Показываем сообщение пользователя в чате
+    chat.innerHTML += `<div class="text-gray-500 mt-2 italic">> User: ${userMsg}</div>`;
     input.value = "";
+    chat.scrollTop = chat.scrollHeight;
 
-    setTimeout(() => {
-        switch(chatStep) {
-            case 0:
-                clientData.url = val;
-                chat.innerHTML += `<div class="text-[#34D59A] mt-2">> AI: Принято. Опишите вашу нишу. В чем ваш "Significant Impact"?</div>`;
-                chatStep++; break;
-            case 1:
-                clientData.niche = val;
-                chat.innerHTML += `<div class="text-[#34D59A] mt-2">> AI: Анализирую конкурентов... Какую фразу должен выдать GPT при вопросе о вашей сфере?</div>`;
-                chatStep++; break;
-            case 2:
-                clientData.goal = val;
-                chat.innerHTML += `<div class="text-[#34D59A] mt-2">> AI: Пакет данных сформирован. Ваш Telegram для связи?</div>`;
-                chatStep++; break;
-            case 3:
-                clientData.contact = val;
-                chat.innerHTML += `<div class="text-[#34D59A] mt-2">> AI: Синхронизация завершена. Перенаправляю на шлюз оплаты...</div>`;
-                sendToTelegram(clientData);
-                setTimeout(() => document.getElementById('paymentModal').classList.remove('hidden'), 2000);
-                break;
-        }
+    try {
+        // 2. Отправляем запрос на твой бэкенд (Vercel API)
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userMsg, history: chatHistory })
+        });
+        
+        const data = await response.json();
+        const aiReply = data.reply;
+
+        // 3. Сохраняем переписку в память
+        chatHistory.push({ role: "user", parts: [{ text: userMsg }] });
+        chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
+
+        // 4. Показываем ответ ИИ
+        chat.innerHTML += `<div class="text-[#34D59A] mt-2">> AI: ${aiReply}</div>`;
         chat.scrollTop = chat.scrollHeight;
-    }, 800);
+
+        // 5. Проверяем, закончил ли ИИ сбор данных
+        if (aiReply.includes("ПАКЕТ СФОРМИРОВАН")) {
+            // Отправляем финальный сигнал серверу, чтобы он кинул отчет в Telegram
+            const finalResp = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    isFinal: true, 
+                    clientData: { 
+                        url: chatHistory[0]?.parts[0]?.text || "Не указан", 
+                        contact: userMsg 
+                    } 
+                })
+            });
+            const finalData = await finalResp.json();
+            
+            // Показываем Order ID и открываем оплату
+            document.getElementById('displayOrderId').innerText = finalData.orderId;
+            setTimeout(() => {
+                document.getElementById('paymentModal').classList.remove('hidden');
+            }, 3000);
+        }
+    } catch (e) {
+        chat.innerHTML += `<div class="text-red-500 mt-2">> Error: Системе требуется перезагрузка или API ключ не настроен.</div>`;
+    }
 }
 
 async function sendToTelegram(data) {
