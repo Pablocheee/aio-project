@@ -1,76 +1,60 @@
 export default async function handler(req, res) {
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
+    if (req.method !== 'POST') {
+        return res.status(405).json({ message: 'Method not allowed' });
+    }
 
+    const { message, history, isFinal, clientData } = req.body;
+
+    // Сценарий 1: Финальная стадия (генерация Order ID и логирование)
+    if (isFinal) {
+        const orderId = Math.floor(100000 + Math.random() * 900000);
+        
+        // Здесь можно добавить отправку данных в Telegram бота или БД
+        console.log(`NEW ORDER #${orderId}:`, clientData);
+
+        return res.status(200).json({ 
+            success: true, 
+            orderId: orderId.toString() 
+        });
+    }
+
+    // Сценарий 2: Обычный диалог с ИИ
     try {
-        const { message, history = [], isFinal, clientData } = req.body;
-        const GROQ_KEY = process.env.GROQ_API_KEY;
-        const TG_TOKEN = process.env.TG_TOKEN;
-        const TG_CHAT_ID = process.env.TG_CHAT_ID;
-
-        const sendTg = async (text) => {
-            try {
-                await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: TG_CHAT_ID, text: text, parse_mode: "Markdown" })
-                });
-            } catch (e) { console.error("TG Error"); }
-        };
-
-        if (isFinal && clientData) {
-            const orderId = Math.floor(100000 + Math.random() * 900000);
-            await sendTg(`💎 *AIO.CORE: ПАКЕТ СФОРМИРОВАН #${orderId}*\n\n🌐 *URL:* ${clientData.url}\n📱 *IDENT:* ${clientData.contact}\n⚙️ *STATUS:* Ожидает оплаты`);
-            return res.status(200).json({ reply: "Finalized", orderId });
-        }
-
-        // Авто-уведомление о новом URL
-        if (message.includes('.') && !message.includes('@')) {
-             await sendTg(`🔍 *AIO.CORE: ОБНАРУЖЕНА ЦЕЛЬ*\n\nURL: ${message}`);
-        }
-
-        const formattedMessages = [
-            { 
-                role: "system", 
-                content: `Ты — ведущий ИИ-стратег AIO.CORE. 
-                СТИЛЬ: Лаконичный, холодный, экспертный.
-                
-                АЛГОРИТМ:
-                1. Сначала получи URL. Когда URL получен, подтверди его и СРАЗУ запроси контакт (Telegram или Email).
-                2. НЕ ПИШИ фразу "ПАКЕТ СФОРМИРОВАН", пока клиент не прислал свои контактные данные.
-                3. Как только у тебя есть И ссылка, И контакт — выдавай финальный вердикт.
-
-                ОТВЕТЫ:
-                - На URL: "Объект зафиксирован. Вижу семантические аномалии в структуре. Укажите ваш Telegram или Email для верификации и финализации пакета."
-                - На контакт: "Верификация пройдена. Синхронизирую данные... Анализ завершен. Стратегический пакет сгенерирован и заблокирован в защищенном узле. Для дешифровки данных требуется подтверждение транзакции. ПАКЕТ СФОРМИРОВАН."
-                
-                О ГАРАНТИЯХ: "Результат фиксируется в выдаче LLM-систем в течение 72 часов. Ошибка исключена."` 
-            }
-        ];
-
-        if (Array.isArray(history)) {
-            history.slice(-10).forEach(msg => {
-                const role = (msg.role === 'assistant' || msg.role === 'model') ? 'assistant' : 'user';
-                let content = msg.parts ? msg.parts[0].text : (msg.content || "");
-                if (content) formattedMessages.push({ role, content });
-            });
-        }
-
-        formattedMessages.push({ role: "user", content: String(message) });
-
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
+            headers: {
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
-                model: "llama-3.3-70b-versatile",
-                messages: formattedMessages,
-                temperature: 0.3 // Снизил температуру для более строгого следования инструкции
+                model: "gpt-4-turbo-preview",
+                messages: [
+                    {
+                        role: "system",
+                        content: `Ты — ИИ-интерфейс системы AIO.CORE. Твоя задача — собрать данные клиента для семантической индексации.
+                        
+                        ПРАВИЛА:
+                        1. Если в истории нет сообщений, ожидай URL. Если прислали не URL, а просто текст — вежливо потребуй адрес проекта.
+                        2. После получения URL, объясни кратко (1 предложение), что ты анализируешь векторную совместимость, и попроси контакт для связи (TG или Email).
+                        3. Как только клиент прислал контакт, ты ОБЯЗАН ответить строго по шаблону:
+                           "АНАЛИЗ ЗАВЕРШЕН. ПАКЕТ СФОРМИРОВАН #[случайное число]. Укажите этот ID при оплате."
+                        
+                        СТИЛЬ: Техно-футуризм, лаконичность, использование терминов (векторы, LSI, нейронные узлы).`
+                    },
+                    ...history,
+                    { role: "user", content: message }
+                ],
+                temperature: 0.7
             })
         });
 
         const data = await response.json();
-        res.status(200).json({ reply: data.choices[0]?.message?.content || "Система в режиме ожидания." });
+        const reply = data.choices[0].message.content;
 
-    } catch (e) {
-        res.status(500).json({ error: "Server Error" });
+        return res.status(200).json({ reply });
+
+    } catch (error) {
+        console.error("OpenAI Error:", error);
+        return res.status(500).json({ reply: "Ошибка узла связи. Повторите запрос." });
     }
 }
