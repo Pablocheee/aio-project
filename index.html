@@ -3,74 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIO.CORE — One-Click Integration</title>
+    <title>AIO.CORE | Масштабирование без конкуренции</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #fff; scroll-behavior: smooth; }
-        .neon-text { color: #34D59A; text-shadow: 0 0 15px rgba(52, 213, 154, 0.3); }
-        .input-field { background: #0f0f0f; border: 1px solid #222; border-radius: 12px; padding: 1rem; outline: none; transition: 0.3s; width: 100%; }
-        .input-field:focus { border-color: #34D59A; box-shadow: 0 0 10px rgba(52, 213, 154, 0.1); }
+        body { font-family: 'Space Grotesk', sans-serif; background: #000; color: #fff; scroll-behavior: smooth; }
+        .glow-text { color: #34D59A; text-shadow: 0 0 20px rgba(52, 213, 154, 0.4); }
+        .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); }
+        .input-premium { background: rgba(0,0,0,0.5); border: 1px solid rgba(52, 213, 154, 0.2); border-radius: 16px; padding: 1.2rem; width: 100%; outline: none; transition: 0.4s; }
+        .input-premium:focus { border-color: #34D59A; box-shadow: 0 0 15px rgba(52, 213, 154, 0.1); }
+        .btn-main { background: #34D59A; color: #000; font-weight: 700; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .btn-main:hover { transform: scale(1.05) translateY(-5px); box-shadow: 0 10px 30px rgba(52, 213, 154, 0.3); }
     </style>
 </head>
 <body>
 
-    <header class="p-6 flex justify-between items-center max-w-7xl mx-auto border-b border-white/5">
-        <div class="text-xl font-black neon-text">AIO.CORE</div>
-        <div class="text-xs uppercase tracking-widest text-gray-500">Niche Stealth Solutions</div>
+    <header class="p-8 flex justify-between items-center max-w-7xl mx-auto">
+        <div class="text-2xl font-bold tracking-tighter">AIO<span class="glow-text">.CORE</span></div>
+        <div class="text-[10px] uppercase tracking-[0.3em] text-gray-500 border border-gray-800 px-4 py-2 rounded-full">Autonomous Engine v.2.6</div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-6 pt-20 pb-32">
-        <section class="text-center mb-20">
-            <h1 class="text-5xl md:text-7xl font-black mb-6 italic">AIO INTEGRATION <br> <span class="neon-text">IN ONE CLICK</span></h1>
-            <p class="text-gray-400 text-lg max-w-xl mx-auto">Автономное внедрение вашего продукта в экосистему ИИ-ответов. Без конкуренции. С максимальным профитом.</p>
-            <div class="mt-10">
-                <a href="#purchase" class="bg-[#34D59A] text-black font-black px-12 py-5 rounded-2xl text-xl hover:scale-105 transition block md:inline-block">КУПИТЬ ЗА 499 USDT</a>
+    <main class="max-w-5xl mx-auto px-6 pt-12 pb-40">
+        <section class="text-center mb-32">
+            <h1 class="text-6xl md:text-[100px] font-bold leading-[0.9] tracking-tighter mb-8">
+                BE THE <span class="glow-text italic">FIRST CHOICE</span> <br> OF ARTIFICIAL INTELLIGENCE
+            </h1>
+            <p class="text-gray-500 text-xl max-w-2xl mx-auto font-light leading-relaxed">
+                Мы внедряем ваш продукт в сознание LLM-систем (ChatGPT, Perplexity, Claude). <br>
+                Пока конкуренты тратят миллионы на Google Ads, вы получаете прямые рекомендации от ИИ.
+            </p>
+        </section>
+
+        <section class="grid md:grid-cols-3 gap-8 mb-40">
+            <div class="glass-card p-8 rounded-[2rem]">
+                <div class="text-[#34D59A] text-xs font-bold mb-4 uppercase">Step 01</div>
+                <h3 class="text-xl font-bold mb-4">Данные</h3>
+                <p class="text-gray-500 text-sm">Вы отправляете ссылку на проект и те самые 5 ключевых слов — семантическую ДНК вашего бренда.</p>
+            </div>
+            <div class="glass-card p-8 rounded-[2rem]">
+                <div class="text-[#34D59A] text-xs font-bold mb-4 uppercase">Step 02</div>
+                <h3 class="text-xl font-bold mb-4">Депозит</h3>
+                <p class="text-gray-500 text-sm">Фиксированная стоимость внедрения в нишевую выдачу. Никаких подписок и скрытых комиссий.</p>
+            </div>
+            <div class="glass-card p-8 rounded-[2rem]">
+                <div class="text-[#34D59A] text-xs font-bold mb-4 uppercase">Step 03</div>
+                <h3 class="text-xl font-bold mb-4">Результат</h3>
+                <p class="text-gray-500 text-sm">Через 72 часа ваш проект начинает фигурировать в ответах ИИ как проверенное решение.</p>
             </div>
         </section>
 
-        <section class="grid md:grid-cols-2 gap-12 mb-32 border-y border-white/5 py-16">
-            <div>
-                <h2 class="text-2xl font-bold mb-6 underline decoration-[#34D59A]">Что вы получаете:</h2>
-                <ul class="space-y-4 text-gray-400">
-                    <li class="flex items-start"><span class="text-[#34D59A] mr-2">✓</span> Полная оптимизация под ChatGPT/Perplexity</li>
-                    <li class="flex items-start"><span class="text-[#34D59A] mr-2">✓</span> Скрытая интеграция в нишевые каталоги</li>
-                    <li class="flex items-start"><span class="text-[#34D59A] mr-2">✓</span> Автономный агент для Telegram</li>
-                </ul>
-            </div>
-            <div>
-                <h2 class="text-2xl font-bold mb-6 underline decoration-[#34D59A]">Что нужно от вас:</h2>
-                <p class="text-sm text-gray-500 mb-4 italic">Подготовьте эти данные перед покупкой:</p>
-                <ol class="space-y-3 text-sm text-gray-400">
-                    <li>1. Ссылка на ваш проект/репозиторий.</li>
-                    <li>2. Список из 5 ключевых слов (как ИИ должен вас находить).</li>
-                    <li>3. Контактный TG для получения логов внедрения.</li>
-                </ol>
-            </div>
-        </section>
-
-        <section id="purchase" class="max-w-xl mx-auto">
-            <div class="bg-zinc-900/50 p-8 rounded-[2rem] border border-white/5">
-                <h2 class="text-2xl font-bold mb-8 text-center">Данные для внедрения</h2>
-                <form id="orderForm" class="space-y-4">
-                    <input type="text" id="projectUrl" placeholder="URL проекта" class="input-field" required>
-                    <input type="text" id="keywords" placeholder="5 Ключевых слов" class="input-field" required>
-                    <input type="text" id="tgContact" placeholder="Ваш @Telegram" class="input-field" required>
-                    <button type="submit" class="w-full bg-white text-black font-black py-5 rounded-2xl hover:bg-[#34D59A] transition uppercase tracking-tighter">Оплатить и отправить</button>
+        <section id="order" class="max-w-2xl mx-auto relative">
+            <div class="absolute -top-20 -left-20 w-64 h-64 bg-[#34D59A] opacity-[0.03] blur-[100px] rounded-full"></div>
+            <div class="glass-card p-12 rounded-[3rem] relative z-10 border-white/10">
+                <h2 class="text-3xl font-bold mb-2 text-center">Протокол внедрения</h2>
+                <p class="text-center text-gray-500 text-sm mb-10">Заполните данные для начала автономной работы</p>
+                
+                <form id="aioForm" class="space-y-6">
+                    <div>
+                        <label class="text-[10px] uppercase text-gray-500 ml-4 mb-2 block">Source URL</label>
+                        <input type="text" id="projectUrl" placeholder="https://your-project.com" class="input-premium" required>
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase text-gray-500 ml-4 mb-2 block">5 Semantic Keywords (Your AI DNA)</label>
+                        <input type="text" id="keywords" placeholder="Например: автономный, децентрализованный, быстрый..." class="input-premium" required>
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase text-gray-500 ml-4 mb-2 block">Telegram Contact</label>
+                        <input type="text" id="tgContact" placeholder="@username" class="input-premium" required>
+                    </div>
+                    
+                    <div class="pt-6">
+                        <button type="submit" class="w-full btn-main py-6 rounded-2xl text-lg uppercase tracking-widest">
+                            АКТИВИРОВАТЬ ЗА 499 USDT
+                        </button>
+                    </div>
                 </form>
             </div>
         </section>
     </main>
 
-    <div id="payModal" class="fixed inset-0 bg-black/95 hidden flex items-center justify-center p-6 z-50 backdrop-blur-md">
-        <div class="bg-zinc-900 border border-[#34D59A]/30 p-10 rounded-[2.5rem] max-w-sm w-full text-center">
-            <h3 class="text-2xl font-bold mb-2">Ожидание оплаты</h3>
-            <p class="text-xs text-gray-500 mb-6">Сумма: 499 USDT (Network: TRC20)</p>
-            <div class="bg-black p-4 rounded-xl mb-6 border border-white/5 relative group cursor-pointer" onclick="copyWallet()">
-                <code id="wallet" class="text-[10px] text-gray-400 break-all">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
-                <div class="text-[10px] mt-2 text-[#34D59A]">Нажми, чтобы скопировать</div>
+    <div id="paymentModal" class="fixed inset-0 bg-black/98 hidden flex items-center justify-center p-6 z-[100] backdrop-blur-2xl">
+        <div class="bg-zinc-900 border border-white/5 p-12 rounded-[3.5rem] max-w-md w-full text-center shadow-2xl">
+            <div class="inline-block p-4 rounded-full bg-[#34D59A]/10 mb-6">
+                <svg class="w-8 h-8 text-[#34D59A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </div>
-            <p class="text-[10px] text-gray-600 mb-6">После перевода работа начнется автоматически на основе присланных данных.</p>
-            <button onclick="location.reload()" class="w-full py-4 rounded-xl bg-white/5 text-white text-sm font-bold">Я оплатил</button>
+            <h3 class="text-2xl font-bold mb-2">Ожидание транзакции</h3>
+            <p class="text-gray-500 text-sm mb-8">Для запуска алгоритмов AIO Core переведите 499 USDT по адресу ниже:</p>
+            
+            <div class="bg-black/50 p-6 rounded-2xl mb-8 border border-white/5 group cursor-pointer active:scale-95 transition" onclick="copyWallet()">
+                <div class="text-[10px] uppercase text-gray-600 mb-2">Network: TRC20 (Tron)</div>
+                <code id="wallet" class="text-xs text-[#34D59A] break-all">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
+                <div class="text-[10px] mt-4 text-gray-500 group-hover:text-white transition italic">Нажмите, чтобы скопировать адрес</div>
+            </div>
+
+            <button onclick="window.location.reload()" class="w-full py-4 text-sm font-bold text-gray-400 hover:text-white transition">Я совершил перевод</button>
         </div>
     </div>
 
@@ -78,23 +104,27 @@
         const TG_TOKEN = '8516029558:AAENA2H4e2TS3HYbRpFKf4snk9w-EWwsAd0';
         const TG_CHAT_ID = '7318415778';
 
-        document.getElementById('orderForm').onsubmit = async (e) => {
+        document.getElementById('aioForm').onsubmit = async (e) => {
             e.preventDefault();
-            const data = {
+            const payload = {
                 url: document.getElementById('projectUrl').value,
-                keys: document.getElementById('keywords').value,
+                keywords: document.getElementById('keywords').value,
                 contact: document.getElementById('tgContact').value
             };
             
-            const msg = `💰 НОВЫЙ ЗАКАЗ (499 USDT)\n\n🌐 Проект: ${data.url}\n🔑 Ключи: ${data.keys}\n👤 Контакт: ${data.contact}`;
+            const text = `💎 НОВЫЙ КОНТРАКТ: 499 USDT\n\n🌐 URL: ${payload.url}\n🧬 ДНК (Слова): ${payload.keywords}\n👤 TG: ${payload.contact}`;
 
-            await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(msg)}`);
-            document.getElementById('payModal').classList.remove('hidden');
+            try {
+                await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(text)}`);
+                document.getElementById('paymentModal').classList.remove('hidden');
+            } catch (err) {
+                alert('Connection error. Try again.');
+            }
         };
 
         function copyWallet() {
             navigator.clipboard.writeText(document.getElementById('wallet').innerText);
-            alert('Адрес скопирован. Сеть TRC20!');
+            alert('Адрес TRC20 скопирован в буфер обмена');
         }
     </script>
 </body>
