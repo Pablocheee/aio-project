@@ -27,7 +27,7 @@
         <div class="text-2xl font-bold tracking-tighter">AIO<span class="glow-text">.CORE</span></div>
         <div class="flex gap-4">
             <button onclick="checkStatus()" class="text-[10px] uppercase tracking-widest border border-white/5 px-4 py-2 rounded-full hover:bg-white/10 transition">Status</button>
-            <button onclick="toggleLang()" class="text-[10px] uppercase tracking-widest border border-white/10 px-4 py-2 rounded-full hover:bg-white/5 transition">EN/RU</button>
+            <button onclick="toggleLang()" class="text-[10px] uppercase tracking-widest border border-white/10 px-4 py-2 rounded-full hover:bg-white/5 transition">EN / RU</button>
         </div>
     </header>
 
@@ -69,6 +69,16 @@
                 </div>
             </div>
         </section>
+
+        <div class="max-w-2xl mx-auto mb-12">
+            <div class="glass-card rounded-[2rem] p-6 font-mono text-[10px] text-zinc-500 h-[100px] overflow-hidden">
+                <div id="logs" class="space-y-1">
+                    <div class="text-[#34D59A]/60">> Engine v2.6 Ready...</div>
+                    <div id="statusLog">> Semantic Core: Stable</div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <div id="paymentModal" class="fixed inset-0 bg-black/98 hidden flex items-center justify-center p-6 z-[100] backdrop-blur-2xl">
@@ -78,7 +88,7 @@
             <div class="bg-black p-5 rounded-2xl mb-6 border border-[#34D59A]/20 cursor-pointer" onclick="copyWallet()">
                 <code id="wallet" class="text-[10px] text-[#34D59A] break-all">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
             </div>
-            <button onclick="verifyPay(this)" class="w-full py-4 text-[10px] font-bold text-white bg-white/5 rounded-xl uppercase">Verify</button>
+            <button onclick="verifyPay(this)" class="w-full py-4 text-[10px] font-bold text-white bg-white/5 rounded-xl uppercase tracking-widest">Verify Transaction</button>
             <div onclick="closeModal()" class="btn-back block w-full text-center mt-6">← Вернуться в чат</div>
             <div id="payStatus" class="mt-4 text-[9px] text-zinc-600 font-mono uppercase"></div>
         </div>
@@ -97,11 +107,20 @@
             document.getElementById('paymentModal').classList.add('hidden');
         }
 
+        function addLog(text) {
+            const logBox = document.getElementById('logs');
+            const entry = document.createElement('div');
+            entry.innerText = `> ${text}`;
+            if (logBox.children.length > 4) logBox.removeChild(logBox.children[1]);
+            logBox.appendChild(entry);
+        }
+
         async function runAnalysis(externalUrl = null) {
             const urlInput = externalUrl || document.getElementById('analyzeUrl').value;
             if(!urlInput) return;
             document.getElementById('analyzeUrl').value = urlInput;
             document.getElementById('analysisResult').classList.remove('hidden');
+            addLog(`Analyzing target: ${urlInput}`);
             animateValue("semScore", 0, Math.floor(Math.random() * 45 + 15), 1500);
             document.getElementById('aiAdvice').innerText = "> Объект зафиксирован. Семантические слои проанализированы.";
         }
@@ -113,9 +132,7 @@
             
             if(!userMsg) return;
 
-            // Блокируем ввод пока ждем ответа
             input.disabled = true;
-
             if(userMsg.includes('.') && !userMsg.includes('@')) runAnalysis(userMsg);
 
             chat.innerHTML += `<div class="text-zinc-500 mt-2 italic">> User: ${userMsg}</div>`;
@@ -131,8 +148,6 @@
                 
                 const data = await response.json();
                 
-                if (data.error) throw new Error(data.error);
-
                 chatHistory.push({ role: "user", content: userMsg });
                 chatHistory.push({ role: "assistant", content: data.reply });
 
@@ -143,6 +158,8 @@
                     setTimeout(() => {
                         chat.innerHTML += `<div class="text-white/40 mt-2 italic font-bold">> System: Генерация защищенного узла связи...</div>`;
                         chat.scrollTop = chat.scrollHeight;
+                        addLog("Initiating Secure Payment Node...");
+                        
                         setTimeout(async () => {
                             const finalResp = await fetch('/api/chat', {
                                 method: 'POST',
@@ -162,8 +179,7 @@
                     }, 1500);
                 }
             } catch (e) {
-                console.error("Chat Error:", e);
-                chat.innerHTML += `<div class="text-red-500 mt-2">> Error: Ошибка соединения с ядром.</div>`;
+                chat.innerHTML += `<div class="text-red-500 mt-2">> Error: Ошибка соединения.</div>`;
             } finally {
                 input.disabled = false;
                 input.focus();
@@ -188,18 +204,4 @@
         }
 
         function verifyPay(btn) {
-            btn.disabled = true; btn.innerText = "SCANNING...";
-            setTimeout(() => { 
-                alert("Транзакция не найдена. Сеть перегружена. Повторите через 5-10 минут."); 
-                btn.disabled = false; 
-                btn.innerText = "Verify"; 
-            }, 3000);
-        }
-
-        function checkStatus() {
-            const id = prompt("Order ID:");
-            if(id) alert("Order #" + id + ": [ACTIVE] - 41%");
-        }
-    </script>
-</body>
-</html>
+            btn.disabled
