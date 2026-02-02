@@ -1,50 +1,51 @@
 export default async function handler(req, res) {
-    // Разрешаем только POST запросы
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
     const { message, history, isFinal, clientData } = req.body;
 
-    // Сценарий 1: Финальная стадия (генерация Order ID)
+    // Сценарий 1: Финальная стадия
     if (isFinal) {
         const orderId = Math.floor(100000 + Math.random() * 900000);
+        // Тут можно вставить отправку в ТГ
         console.log(`NEW ORDER #${orderId}:`, clientData);
         return res.status(200).json({ success: true, orderId: orderId.toString() });
     }
 
-    // Сценарий 2: Диалог с ИИ
+    // Сценарий 2: Диалог с Grok
     try {
-        if (!process.env.OPENAI_API_KEY) {
-            throw new Error("Missing OpenAI API Key");
-        }
-
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        const apiKey = process.env.XAI_API_KEY; // Убедись, что ключ в ENV называется так
+        
+        const response = await fetch('https://api.x.ai/v1/chat/completions', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                'Authorization': `Bearer ${apiKey}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: "gpt-4-turbo-preview", // или "gpt-3.5-turbo" для экономии
+                model: "grok-beta", // Или актуальная модель, например "grok-2"
                 messages: [
                     {
                         role: "system",
-                        content: `Ты — ИИ AIO.CORE. Собирай данные. 
-                        Сначала жди URL. После URL — проси контакт (TG/Email). 
-                        Когда контакт получен, строго пиши: "АНАЛИЗ ЗАВЕРШЕН. ПАКЕТ СФОРМИРОВАН #XXXXXX".`
+                        content: `Ты — ИИ-интерфейс системы AIO.CORE. 
+                        Твоя цель: получить URL и контакт клиента.
+                        1. Если прислали URL — подтверди "захват цели" и запроси контакт (TG/Email).
+                        2. Если прислали контакт — напиши строго: "ПАКЕТ СФОРМИРОВАН".
+                        Стиль: Лаконичный, хакерский, футуристичный.`
                     },
                     ...(history || []),
                     { role: "user", content: message }
-                ]
+                ],
+                temperature: 0.6
             })
         });
 
         const data = await response.json();
-        
+
         if (data.error) {
-            console.error("OpenAI API Error:", data.error);
-            return res.status(500).json({ reply: "Ошибка API: " + data.error.message });
+            console.error("Grok API Error:", data.error);
+            return res.status(500).json({ reply: "Ошибка Grok: " + data.error.message });
         }
 
         const reply = data.choices[0].message.content;
