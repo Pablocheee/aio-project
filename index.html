@@ -99,6 +99,26 @@
                         <span class="lang-en lang-hide">ACTIVATE FOR 499 USDT</span>
                     </button>
                 </form>
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-white/5 pt-10">
+    <div class="text-center p-4">
+        <div class="text-[#34D59A] text-lg font-bold mb-1">01</div>
+        <div class="text-[10px] uppercase tracking-widest font-bold mb-2">Verification</div>
+        <p class="text-[9px] text-gray-500 leading-relaxed lang-ru">После подтверждения транзакции мы свяжемся с вами в Telegram для уточнения деталей проекта.</p>
+        <p class="text-[9px] text-gray-500 leading-relaxed lang-en lang-hide">After transaction confirmation, we will contact you via Telegram to discuss project details.</p>
+    </div>
+    <div class="text-center p-4 border-y md:border-y-0 md:border-x border-white/5">
+        <div class="text-[#34D59A] text-lg font-bold mb-1">02</div>
+        <div class="text-[10px] uppercase tracking-widest font-bold mb-2">Injection</div>
+        <p class="text-[9px] text-gray-500 leading-relaxed lang-ru">В течение 24-48 часов мы проводим семантическую интеграцию вашего проекта в базу данных ИИ.</p>
+        <p class="text-[9px] text-gray-500 leading-relaxed lang-en lang-hide">Within 24-48 hours, we perform semantic integration of your project into the AI database.</p>
+    </div>
+    <div class="text-center p-4">
+        <div class="text-[#34D59A] text-lg font-bold mb-1">03</div>
+        <div class="text-[10px] uppercase tracking-widest font-bold mb-2">Impact</div>
+        <p class="text-[9px] text-gray-500 leading-relaxed lang-ru">Ваш проект начинает появляться в ответах ChatGPT и Perplexity по целевым запросам.</p>
+        <p class="text-[9px] text-gray-500 leading-relaxed lang-en lang-hide">Your project starts appearing in ChatGPT and Perplexity responses for target queries.</p>
+    </div>
+</div>
 
                 <div class="mt-8 flex items-center justify-center gap-6 opacity-40">
                     <div class="flex items-center gap-2">
@@ -136,8 +156,13 @@
                 <span class="lang-en lang-hide">After payment, send a screenshot to support:</span>
             </p>
             <a href="https://t.me/Mistah_chee" target="_blank" class="block mt-2 text-[#34D59A] font-bold text-xs underline uppercase tracking-widest">
-                @AIO_SUPPORT_MANAGER
+                @Mistah_chee
             </a>
+
+            <p class="mt-4 text-[9px] text-gray-400 italic">
+                <span class="lang-ru">* Среднее время активации протокола: 24 часа.</span>
+                <span class="lang-en lang-hide">* Average protocol activation time: 24 hours.</span>
+            </p>
         </div>
     </div>
 
@@ -177,7 +202,7 @@
 
         document.getElementById('aioForm').onsubmit = async (e) => {
             e.preventDefault();
-            const orderId = Math.floor(100000 + Math.random() * 900000); // Генерируем 6-значный ID
+            const orderId = Math.floor(100000 + Math.random() * 900000);
             document.getElementById('displayOrderId').innerText = orderId;
 
             const data = {
