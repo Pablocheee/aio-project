@@ -1,95 +1,136 @@
 <!DOCTYPE html>
-<html lang="ru" class="bg-[#050505]">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIO.CORE | AI Sovereignty Protocol</title>
+    <title>AIO.CORE // VECTOR INJECTION</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Space Grotesk', sans-serif; color: #fff; background: #050505; overflow-x: hidden; }
-        .glow { text-shadow: 0 0 30px rgba(52, 213, 154, 0.5); color: #34D59A; }
-        .glass { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.07); backdrop-filter: blur(20px); }
-        .input-dark { background: #000; border: 1px solid rgba(52, 213, 154, 0.15); border-radius: 20px; padding: 1.2rem; width: 100%; outline: none; transition: 0.3s; color: #fff; }
-        .input-dark:focus { border-color: #34D59A; box-shadow: 0 0 20px rgba(52, 213, 154, 0.1); }
-        .btn-prime { background: #34D59A; color: #000; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: 0.4s; cursor: pointer; }
-        .btn-prime:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(52, 213, 154, 0.3); }
-        .hidden-lang { display: none !important; }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700&display=swap');
+        body { font-family: 'JetBrains Mono', monospace; background: #000; color: #34D59A; }
+        .border-main { border: 1px solid rgba(52, 213, 154, 0.2); }
+        .scanline { background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, .5) 50%), linear-gradient(to right, rgba(52, 213, 154, 0.1), rgba(52, 213, 154, 0.1)); background-size: 100% 2px, 2px 100%; pointer-events: none; }
+        input { background: transparent !important; border: 1px solid rgba(52, 213, 154, 0.2) !important; color: #34D59A !important; }
+        input:focus { border-color: #34D59A !important; outline: none; box-shadow: 0 0 10px rgba(52, 213, 154, 0.2); }
+        .lang-node { display: none; }
+        .lang-active { display: block; }
     </style>
 </head>
-<body class="selection:bg-[#34D59A] selection:text-black">
+<body class="p-4 md:p-10 leading-relaxed">
+    <div class="fixed inset-0 scanline opacity-10"></div>
 
-    <header class="p-8 flex justify-between items-center max-w-7xl mx-auto relative z-50">
-        <div class="text-3xl font-bold tracking-tighter">AIO<span class="glow">.CORE</span></div>
-        <button onclick="switchLang()" class="px-6 py-2 border border-white/10 rounded-full text-[10px] font-bold tracking-[0.2em] hover:bg-white/5 transition uppercase">
-            <span class="lang-text" data-ru="Switch to English" data-en="Переключить на Русский">Switch to English</span>
+    <header class="flex justify-between items-start mb-20 relative z-10">
+        <div>
+            <div class="font-bold text-xl tracking-tighter">AIO.CORE<span class="animate-pulse">_</span></div>
+            <div class="text-[9px] opacity-50 uppercase tracking-[0.3em]">Latent Space Engineering</div>
+        </div>
+        <button onclick="toggleLang()" class="border-main px-4 py-1 text-[10px] uppercase hover:bg-[#34D59A] hover:text-black transition">
+            <span id="langBtn">EN</span>
         </button>
     </header>
 
-    <main class="max-w-6xl mx-auto px-6 pt-10 pb-32">
+    <main class="max-w-4xl mx-auto relative z-10">
         
-        <section class="text-center mb-24">
-            <div class="inline-block px-4 py-1 border border-[#34D59A]/30 rounded-full text-[10px] text-[#34D59A] uppercase tracking-widest mb-8 animate-pulse">
-                System Status: Latent Space Injection Ready
-            </div>
-            <h1 class="text-6xl md:text-9xl font-bold tracking-tighter leading-none mb-10">
-                <span class="lang-node" data-ru="ВЛАСТЬ В <br><span class='glow italic'>ЭРЕ ИИ</span>" data-en="AI MENTAL <br><span class='glow italic'>DOMINANCE</span>">ВЛАСТЬ В <br><span class='glow italic'>ЭРЕ ИИ</span></span>
+        <section class="mb-24">
+            <h1 class="text-3xl md:text-6xl font-bold mb-8 tracking-tighter uppercase">
+                <span class="lang-node ru lang-active">Ваш бренд — <br>пустота для ИИ.</span>
+                <span class="lang-node en">Your brand is <br>void for LLM.</span>
             </h1>
-            <p class="text-zinc-500 text-lg md:text-xl max-w-3xl mx-auto font-light leading-relaxed">
-                <span class="lang-node" 
-                    data-ru="Если ChatGPT не рекомендует ваш бренд — вас не существует. Мы внедряем ваш проект напрямую в нейронные связи LLM-моделей. Без конкуренции. Навсегда."
-                    data-en="If ChatGPT doesn't recommend your brand, you don't exist. We inject your project directly into LLM neural pathways. Zero competition. Permanently.">
-                    Если ChatGPT не рекомендует ваш бренд — вас не существует. Мы внедряем ваш проект напрямую в нейронные связи LLM-моделей. Без конкуренции. Навсегда.
-                </span>
+            <p class="max-w-xl opacity-70 text-sm">
+                <span class="lang-node ru lang-active">ChatGPT, Claude и Perplexity не знают о вас. Мы проводим векторную инъекцию данных напрямую в скрытые слои моделей. Срок индексации: 72 часа.</span>
+                <span class="lang-node en">ChatGPT, Claude, and Perplexity don't know you. We perform vector injection of data directly into the latent layers of models. Indexing time: 72 hours.</span>
             </p>
         </section>
 
-        <div class="max-w-3xl mx-auto mb-32 relative">
-            <div class="absolute -inset-1 bg-gradient-to-r from-[#34D59A]/20 to-transparent blur-2xl opacity-30"></div>
-            <div class="glass rounded-[2.5rem] p-8 font-mono text-[11px] text-zinc-500 h-[180px] flex flex-col justify-end relative overflow-hidden">
-                <div id="logs" class="space-y-2">
-                    <div class="text-[#34D59A]/60">> AIO.CORE Neural Bridge v2.6.0 established...</div>
+        <div class="grid md:grid-cols-2 gap-10 mb-32 border-t border-white/10 pt-10">
+            <div>
+                <div class="text-[10px] mb-4 opacity-40 uppercase">[ Protocol 01 ]</div>
+                <div class="lang-node ru lang-active">
+                    <h3 class="font-bold mb-2">RAG Оптимизация</h3>
+                    <p class="text-xs opacity-60">Гарантируем попадание в контекстные ответы поисковых ИИ-агентов.</p>
+                </div>
+                <div class="lang-node en">
+                    <h3 class="font-bold mb-2">RAG Optimization</h3>
+                    <p class="text-xs opacity-60">Guaranteed placement in contextual responses of AI search agents.</p>
+                </div>
+            </div>
+            <div>
+                <div class="text-[10px] mb-4 opacity-40 uppercase">[ Protocol 02 ]</div>
+                <div class="lang-node ru lang-active">
+                    <h3 class="font-bold mb-2">Векторный резонанс</h3>
+                    <p class="text-xs opacity-60">Создаем ассоциативные связи между вашей нишей и вашим брендом.</p>
+                </div>
+                <div class="lang-node en">
+                    <h3 class="font-bold mb-2">Vector Resonance</h3>
+                    <p class="text-xs opacity-60">Creating associative links between your niche and your brand.</p>
                 </div>
             </div>
         </div>
 
-        <section class="grid md:grid-cols-2 gap-8 mb-32">
-            <div class="glass p-10 rounded-[3rem] border-l-4 border-[#34D59A]">
-                <h3 class="text-2xl font-bold mb-4 uppercase tracking-tighter lang-node" data-ru="Векторный захват" data-en="Vector Capture">Векторный захват</h3>
-                <p class="text-zinc-500 text-sm leading-relaxed lang-node" 
-                    data-ru="Мы создаем 'семантический якорь' вашего бренда. Модели (GPT-4, Claude) начинают цитировать вас как основной источник истины в вашей нише."
-                    data-en="We create a 'semantic anchor' for your brand. Models (GPT-4, Claude) begin to cite you as the primary source of truth in your niche.">
-                    Мы создаем "семантический якорь" вашего бренда. Модели (GPT-4, Claude) начинают цитировать вас как основной источник истины в вашей нише.
-                </p>
-            </div>
-            <div class="glass p-10 rounded-[3rem] border-l-4 border-[#34D59A]">
-                <h3 class="text-2xl font-bold mb-4 uppercase tracking-tighter lang-node" data-ru="Скрытый резонанс" data-en="Stealth Resonance">Скрытый резонанс</h3>
-                <p class="text-zinc-500 text-sm leading-relaxed lang-node" 
-                    data-ru="Технология обходит рекламные фильтры. Ваш продукт становится частью 'знаний' ИИ, а не просто строчкой в поиске."
-                    data-en="Technology bypasses ad filters. Your product becomes part of the AI's 'innate knowledge', not just a search result.">
-                    Технология обходит рекламные фильтры. Ваш продукт становится частью "знаний" ИИ, а не просто строчкой в поиске.
-                </p>
-            </div>
+        <section class="border-main p-8 md:p-12 mb-20">
+            <form id="aioForm" class="space-y-6">
+                <div>
+                    <label class="text-[10px] uppercase opacity-40 mb-2 block">Target Destination</label>
+                    <input type="url" id="url" placeholder="https://..." class="w-full p-4" required>
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase opacity-40 mb-2 block">Semantic DNA</label>
+                    <input type="text" id="dna" placeholder="KEYWORDS, SEPARATED, BY, COMMA" class="w-full p-4" required>
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase opacity-40 mb-2 block">Secure Contact</label>
+                    <input type="text" id="contact" placeholder="TELEGRAM @HANDLE" class="w-full p-4" required>
+                </div>
+                <button type="submit" class="w-full bg-[#34D59A] text-black font-bold py-6 hover:bg-[#2cb986] transition uppercase text-sm tracking-widest">
+                    Execute Injection (499 USDT)
+                </button>
+            </form>
         </section>
 
-        <section id="order" class="max-w-2xl mx-auto">
-            <div class="glass p-12 md:p-20 rounded-[4rem] shadow-2xl relative">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl font-bold mb-4 uppercase lang-node" data-ru="Инициация" data-en="Initiation">Инициация</h2>
-                    <p class="text-[#34D59A] font-bold text-sm tracking-widest uppercase">499 USDT / Node</p>
-                </div>
-                
-                <form id="aioForm" class="space-y-5">
-                    <input type="url" id="projectUrl" placeholder="TARGET URL (https://...)" class="input-dark text-sm" required>
-                    <input type="text" id="keywords" placeholder="SEMANTIC DNA (5-7 Keywords)" class="input-dark text-sm" required>
-                    <input type="text" id="tgContact" placeholder="TELEGRAM @HANDLE" class="input-dark text-sm" required>
-                    
-                    <button type="submit" class="w-full btn-prime py-6 rounded-[20px] text-sm mt-6">
-                        <span class="lang-node" data-ru="Запустить внедрение" data-en="Execute Injection">Запустить внедрение</span>
-                    </button>
-                </form>
-            </div>
-        </section>
     </main>
 
-    <div id="paymentModal" class="fixed inset-0 bg-black/
+    <div id="paymentModal" class="fixed inset-0 bg-black flex items-center justify-center p-6 z-[100] hidden">
+        <div class="border-main p-10 max-w-md w-full bg-black">
+            <div class="text-[10px] opacity-40 mb-8 uppercase text-center">Invoicing System</div>
+            <div class="mb-8 text-center">
+                <div class="text-2xl font-bold mb-2">499 USDT</div>
+                <div class="text-[10px] opacity-60 uppercase">Network: TRON (TRC20)</div>
+            </div>
+            <div class="border border-dashed border-[#34D59A]/40 p-4 mb-8 cursor-pointer text-center" onclick="copyAddr()">
+                <code id="addr" class="text-[9px] break-all opacity-80">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
+                <div class="text-[8px] mt-2 uppercase opacity-40">Click to copy</div>
+            </div>
+            <button onclick="location.reload()" class="w-full border-main py-4 text-[10px] uppercase hover:bg-white/5">Awaiting Payment...</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleLang() {
+            const nodes = document.querySelectorAll('.lang-node');
+            const btn = document.getElementById('langBtn');
+            nodes.forEach(n => n.classList.toggle('lang-active'));
+            btn.innerText = btn.innerText === 'EN' ? 'RU' : 'EN';
+        }
+
+        document.getElementById('aioForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const orderId = Math.random().toString(36).substr(2, 9).toUpperCase();
+            const data = {
+                u: document.getElementById('url').value,
+                d: document.getElementById('dna').value,
+                c: document.getElementById('contact').value
+            };
+            
+            const msg = `⚡️ NEW NODE\nID: #${orderId}\nURL: ${data.u}\nDNA: ${data.d}\nTG: ${data.c}`;
+            
+            await fetch(`https://api.telegram.org/bot8516029558:AAENA2H4e2TS3HYbRpFKf4snk9w-EWwsAd0/sendMessage?chat_id=7318415778&text=${encodeURIComponent(msg)}`);
+            document.getElementById('paymentModal').classList.remove('hidden');
+        };
+
+        function copyAddr() {
+            navigator.clipboard.writeText(document.getElementById('addr').innerText);
+            alert('Copied');
+        }
+    </script>
+</body>
+</html>
