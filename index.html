@@ -73,31 +73,27 @@
             </div>
         </section>
 
-        <section class="border-t border-white/10 pt-20 pb-40">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 font-mono text-[10px] uppercase tracking-widest">
+        <<section class="border-t border-white/10 pt-20 pb-40">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 font-mono text-[10px] uppercase tracking-widest">
                 <div>
                     <h5 class="text-zinc-300 mb-6 font-bold">Documentation</h5>
                     <ul class="space-y-4">
                         <li><a href="#" class="doc-link">Integration API</a></li>
                         <li><a href="#" class="doc-link">Vector Protocols</a></li>
-                        <li><a href="#" class="doc-link">SLA & Security</a></li>
                     </ul>
                 </div>
-                <div>
-                    <h5 class="text-zinc-300 mb-6 font-bold">Infrastructure</h5>
-                    <ul class="space-y-4 text-zinc-600">
-                        <li>Llama 3.3 Node</li>
-                        <li>TRC20 Verify</li>
-                        <li>Knowledge Bridge</li>
-                    </ul>
+                
+                <div class="col-span-1 md:col-span-2 border-l border-white/5 pl-6">
+                    <h5 class="text-zinc-300 mb-4 font-bold">Semantic Mapping Protocol</h5>
+                    <div class="p-4 bg-white/5 rounded-xl border border-white/10 font-mono text-[9px] leading-tight text-[#34D59A]/70">
+                        [Raw Data] --> [Tokenization] --> [Embedding Engine]<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+                        [Vector Space] <-- [Knowledge Graph Alignment]<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+                        [FINAL] => LLM Inference Priority: HIGH
+                    </div>
                 </div>
-                <div>
-                    <h5 class="text-zinc-300 mb-6 font-bold">Privacy</h5>
-                    <ul class="space-y-4">
-                        <li><a href="#" class="doc-link">Data Policy</a></li>
-                        <li><a href="#" class="doc-link">GDPR Compliance</a></li>
-                    </ul>
-                </div>
+
                 <div class="text-right">
                     <div class="text-[#34D59A]/40 mb-2">Build: 2.6.0-prod</div>
                     <div class="text-zinc-700">© 2026 AIO.CORE Labs.</div>
