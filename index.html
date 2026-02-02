@@ -32,7 +32,6 @@
     </header>
 
     <main class="max-w-5xl mx-auto px-6 py-12">
-        
         <section class="text-center mb-24">
             <h1 class="text-5xl md:text-8xl font-bold leading-tight tracking-tighter mb-8 uppercase">
                 <span class="lang-ru">Семантическая <span class="glow-text italic">индексация</span></span>
@@ -78,49 +77,6 @@
                 </div>
             </div>
         </div>
-
-        <section class="max-w-4xl mx-auto mb-32">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6">
-                    <h2 class="text-3xl font-bold glow-text uppercase tracking-tighter italic">Whitepaper v2.6</h2>
-                    <p class="text-zinc-400 text-sm leading-relaxed">
-                        Традиционное SEO мертво. В эру генеративного интеллекта ваш проект должен существовать не в виде ссылок, а в виде <span class="text-white font-bold italic underline">семантических векторов</span> внутри нейронных сетей.
-                    </p>
-                    <ul class="space-y-4 text-[11px] font-mono text-zinc-500 uppercase tracking-widest">
-                        <li class="flex items-center gap-3">
-                            <span class="w-2 h-2 bg-[#34D59A] rounded-full"></span>
-                            LSI-Интеграция в обход краулеров
-                        </li>
-                        <li class="flex items-center gap-3 text-zinc-300">
-                            <span class="w-2 h-2 bg-[#34D59A] rounded-full shadow-[0_0_10px_#34D59A]"></span>
-                            Прямая прошивка в векторные БД
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <span class="w-2 h-2 bg-[#34D59A] rounded-full"></span>
-                            Валидация через Claude/GPT API
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="glass-card p-8 rounded-[2rem] border-white/5 bg-gradient-to-br from-white/5 to-transparent">
-                    <h4 class="text-[10px] text-zinc-500 mb-4 font-mono">// CORE SPECIFICATIONS</h4>
-                    <div class="space-y-4">
-                        <div class="border-l-2 border-[#34D59A]/30 pl-4">
-                            <div class="text-[10px] text-[#34D59A]">ALGORITHM</div>
-                            <div class="text-xs font-bold">Neural Semantic Alignment (NSA)</div>
-                        </div>
-                        <div class="border-l-2 border-white/10 pl-4">
-                            <div class="text-[10px] text-zinc-500">LATENCY</div>
-                            <div class="text-xs font-bold">72h Propagation Interval</div>
-                        </div>
-                        <div class="border-l-2 border-white/10 pl-4">
-                            <div class="text-[10px] text-zinc-500">IMPACT</div>
-                            <div class="text-xs font-bold">100% Discoverability via GPT</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
     <div id="paymentModal" class="fixed inset-0 bg-black/98 hidden flex items-center justify-center p-6 z-[100] backdrop-blur-2xl">
@@ -145,9 +101,7 @@
             document.querySelectorAll('.lang-ru, .lang-en').forEach(el => el.classList.toggle('lang-hide'));
         }
 
-        function closeModal() {
-            document.getElementById('paymentModal').classList.add('hidden');
-        }
+        function closeModal() { document.getElementById('paymentModal').classList.add('hidden'); }
 
         function addLog(text) {
             const logBox = document.getElementById('logs');
@@ -159,7 +113,7 @@
 
         async function runAnalysis(externalUrl = null) {
             const urlInput = externalUrl || document.getElementById('analyzeUrl').value;
-            if(!urlInput) return;
+            if(!urlInput || !urlInput.includes('.')) return;
             document.getElementById('analyzeUrl').value = urlInput;
             document.getElementById('analysisResult').classList.remove('hidden');
             addLog(`Analyzing target: ${urlInput}`);
@@ -172,6 +126,13 @@
             const chat = document.getElementById('aiChat');
             const userMsg = input.value.trim();
             if(!userMsg) return;
+
+            // Валидация URL на первом шаге
+            if (chatHistory.length === 0 && !userMsg.includes('.')) {
+                chat.innerHTML += `<div class="text-red-400 mt-2">> System: Введите корректный URL для инициализации.</div>`;
+                chat.scrollTop = chat.scrollHeight;
+                return;
+            }
 
             input.disabled = true;
             if(userMsg.includes('.') && !userMsg.includes('@')) runAnalysis(userMsg);
@@ -201,21 +162,26 @@
                         addLog("Initiating Secure Payment Node...");
                         
                         setTimeout(async () => {
-                            const finalResp = await fetch('/api/chat', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ 
-                                    isFinal: true, 
-                                    clientData: { 
-                                        url: chatHistory[0]?.content || "Unknown", 
-                                        contact: userMsg 
-                                    } 
-                                })
-                            });
-                            const finalData = await finalResp.json();
-                            document.getElementById('displayOrderId').innerText = finalData.orderId || "A-77";
-                            document.getElementById('paymentModal').classList.remove('hidden');
-                        }, 4000);
+                            try {
+                                const finalResp = await fetch('/api/chat', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ 
+                                        isFinal: true, 
+                                        clientData: { 
+                                            url: chatHistory[0]?.content || "Unknown", 
+                                            contact: userMsg 
+                                        } 
+                                    })
+                                });
+                                const finalData = await finalResp.json();
+                                document.getElementById('displayOrderId').innerText = finalData.orderId || "A-77";
+                                document.getElementById('paymentModal').classList.remove('hidden');
+                            } catch (e) {
+                                document.getElementById('displayOrderId').innerText = "ERR-" + Math.floor(Math.random()*100);
+                                document.getElementById('paymentModal').classList.remove('hidden');
+                            }
+                        }, 3000);
                     }, 1500);
                 }
             } catch (e) {
