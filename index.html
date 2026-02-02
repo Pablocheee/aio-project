@@ -233,55 +233,60 @@ async function runAnalysis(btn) {
     if(!urlInput) return alert("Enter URL");
     
     let url = urlInput.startsWith('http') ? urlInput : 'https://' + urlInput;
-    
     btn.disabled = true;
-    btn.innerText = "LINKING...";
+    btn.innerText = "CONNECTING...";
+    
     const resultBox = document.getElementById('analysisResult');
     const advice = document.getElementById('aiAdvice');
     resultBox.classList.remove('hidden');
 
     try {
-        addLogEntry(`Attempting handshake with ${urlInput}...`, true);
-        
-        // Реальный запрос к сайту через прокси
+        addLogEntry(`Fetching live data from ${urlInput}...`, true);
         const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
         const data = await response.json();
-        const html = data.contents.toLowerCase();
+        const html = data.contents; // Получаем реальный HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
 
-        addLogEntry("Handshake success. Extracting DOM...", true);
+        addLogEntry("DOM Tree constructed. Running semantic audit...");
 
-        // 1. Проверка JSON-LD (Schema)
-        const hasSchema = html.includes('application/ld+json');
-        const schemaScore = hasSchema ? Math.floor(Math.random() * (92 - 75) + 75) : Math.floor(Math.random() * 25);
-        addLogEntry(hasSchema ? "JSON-LD Detected." : "JSON-LD Missing. Semantic loss high.");
+        // 1. РЕАЛЬНЫЙ ПОДСЧЕТ
+        const hasSchema = html.toLowerCase().includes('application/ld+json');
+        const metaDesc = doc.querySelector('meta[name="description"]')?.content || "";
+        const h1Count = doc.querySelectorAll('h1').length;
+        const pCount = doc.querySelectorAll('p').length;
+        
+        // Логика оценки:
+        // Semantic Authority зависит от наличия Schema и описания
+        let semanticScore = 0;
+        if (hasSchema) semanticScore += 50;
+        if (metaDesc.length > 50) semanticScore += 30;
+        if (h1Count === 1) semanticScore += 20;
 
-        // 2. Проверка семантических тегов
-        const tags = ['article', 'section', 'nav', 'header', 'footer', 'main'];
-        let found = 0;
-        tags.forEach(t => { if(html.includes('<' + t)) found++; });
-        const vectorScore = Math.floor((found / tags.length) * 100);
-        addLogEntry(`Structure: Found ${found}/${tags.length} semantic anchors.`);
+        // Vector Connectivity зависит от структуры текста (p) и заголовков
+        let vectorScore = Math.min(100, (pCount * 5) + (h1Count * 10));
 
-        animateValue("semScore", 0, schemaScore, 1000);
+        animateValue("semScore", 0, semanticScore, 1000);
         animateValue("vecScore", 0, vectorScore, 1000);
 
-        if (!hasSchema) {
-            advice.innerText = currentLang === 'ru' 
-                ? "> ОШИБКА: Проект не имеет цифрового паспорта (JSON-LD). Для LLM ваш контент — это неструктурированный шум."
-                : "> ERROR: Project lacks a digital passport (JSON-LD). For LLM, your content is unstructured noise.";
-        } else if (found < 3) {
-            advice.innerText = currentLang === 'ru'
-                ? "> ВНИМАНИЕ: Слабые векторные связи. ИИ может игнорировать проект при формировании сложных ответов."
-                : "> WARNING: Weak vector links. AI may ignore the project when forming complex answers.";
+        // 2. ВЫВОД РЕАЛЬНЫХ ДАННЫХ В ЛОГ
+        addLogEntry(`Analysis: JSON-LD: ${hasSchema ? 'FOUND' : 'MISSING'}`);
+        addLogEntry(`Analysis: H1 Headers: ${h1Count}, Paragraphs: ${pCount}`);
+
+        // Специфический совет на основе найденного
+        let report = "";
+        if (currentLang === 'ru') {
+            report = `> ОТЧЕТ: Найдено ${h1Count} заголовков H1 и ${pCount} текстовых блоков. `;
+            report += hasSchema ? "JSON-LD обнаружен, но требует векторной оптимизации." : "Критическая ошибка: JSON-LD отсутствует.";
         } else {
-            advice.innerText = currentLang === 'ru'
-                ? "> АНАЛИЗ ЗАВЕРШЕН: Базовая видимость есть, но отсутствует приоритетный статус в латентном пространстве."
-                : "> ANALYSIS COMPLETE: Basic visibility exists, but priority status in latent space is missing.";
+            report = `> AUDIT: Found ${h1Count} H1 tags and ${pCount} text blocks. `;
+            report += hasSchema ? "JSON-LD present, but needs vector tuning." : "Critical: No JSON-LD detected.";
         }
+        advice.innerText = report;
 
     } catch (e) {
-        addLogEntry("Connection failed. SSL/CORS Block.", false);
-        advice.innerText = "> FATAL: Could not analyze the target. URL unreachable or protected.";
+        addLogEntry("Failed to bypass CORS or site is down.", false);
+        advice.innerText = "> ERROR: Secure handshake failed. Site policy prevents deep scan.";
     } finally {
         btn.disabled = false;
         btn.innerText = "RE-SCAN";
