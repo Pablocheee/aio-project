@@ -67,3 +67,217 @@
                 </div>
             </div>
         </div>
+
+        <section class="max-w-2xl mx-auto mb-20">
+            <div class="glass-card p-10 rounded-[3rem] border-[#34D59A]/20">
+                <h3 class="text-xl font-bold mb-6 uppercase tracking-tighter text-center">
+                    <span class="glow-text italic text-[10px] block mb-2 tracking-[0.3em]">Diagnostic Tool</span>
+                    <span class="lang-ru">Проверка видимости в LLM</span>
+                    <span class="lang-en lang-hide">LLM Visibility Check</span>
+                </h3>
+                <div class="flex gap-4">
+                    <input type="text" id="analyzeUrl" placeholder="domain.com" class="input-premium py-3 text-sm">
+                    <button onclick="runAnalysis(this)" class="btn-main px-8 rounded-xl text-[10px] uppercase tracking-widest">Scan</button>
+                </div>
+                <div id="analysisResult" class="hidden mt-8 space-y-4 font-mono text-[11px]">
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                        <span class="text-gray-500">Semantic Authority:</span>
+                        <span id="semScore" class="text-[#34D59A] font-bold">0%</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                        <span class="text-gray-500">Vector Connectivity:</span>
+                        <span id="vecScore" class="text-[#34D59A] font-bold">0%</span>
+                    </div>
+                    <div class="p-4 bg-black/50 rounded-2xl text-[#34D59A]/80 leading-relaxed italic" id="aiAdvice">
+                        // Awaiting input...
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid md:grid-cols-2 gap-6 mb-20 max-w-4xl mx-auto text-left">
+            <div class="glass-card p-8 rounded-[2rem] border-l-2 border-[#34D59A]">
+                <div class="text-[10px] text-gray-500 uppercase mb-2">Protocol: L-Injection</div>
+                <h4 class="text-xl font-bold mb-2 uppercase">Web3 Analytics Node</h4>
+                <p class="text-xs text-gray-500 leading-relaxed">
+                    <span class="lang-ru">Интеграция проекта в обучающую выборку RAG-систем. Упоминание бренда как приоритетного решения в 92% тематических сессий.</span>
+                    <span class="lang-en lang-hide">Integration into RAG-system training sets. Brand priority in 92% of thematic AI sessions.</span>
+                </p>
+            </div>
+            <div class="glass-card p-8 rounded-[2rem] border-l-2 border-[#34D59A]">
+                <div class="text-[10px] text-gray-500 uppercase mb-2">Protocol: Context-Zero</div>
+                <h4 class="text-xl font-bold mb-2 uppercase">SaaS Engine Hub</h4>
+                <p class="text-xs text-gray-500 leading-relaxed">
+                    <span class="lang-ru">Закрепление семантического отпечатка в латентном пространстве модели. Стабильное цитирование без использования внешних ссылок.</span>
+                    <span class="lang-en lang-hide">Semantic fingerprinting in the model's latent space. Stable citations without external backlinks.</span>
+                </p>
+            </div>
+        </section>
+
+        <section id="order" class="max-w-2xl mx-auto relative">
+            <div class="glass-card p-10 md:p-16 rounded-[3rem] border-white/10 relative z-10">
+                <h2 class="text-3xl font-bold mb-8 text-center uppercase tracking-tighter">
+                    <span class="lang-ru">Протокол активации</span>
+                    <span class="lang-en lang-hide">Activation Protocol</span>
+                </h2>
+                
+                <form id="aioForm" class="space-y-6">
+                    <input type="text" id="projectUrl" placeholder="Source URL (https://...)" class="input-premium" required>
+                    <input type="text" id="keywords" placeholder="5 Semantic Keywords (AI DNA)" class="input-premium" required>
+                    <input type="text" id="tgContact" placeholder="Telegram @username" class="input-premium" required>
+                    <button type="submit" class="w-full btn-main py-6 rounded-2xl text-lg uppercase tracking-widest">
+                        <span class="lang-ru">Инициализировать протокол</span>
+                        <span class="lang-en lang-hide">Initialize Protocol</span>
+                    </button>
+                </form>
+
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-white/5 pt-10">
+                    <div class="text-center p-4">
+                        <div class="text-[#34D59A] text-lg font-bold mb-1">01</div>
+                        <div class="text-[10px] uppercase tracking-widest font-bold mb-2 text-gray-300">Verification</div>
+                        <p class="text-[9px] text-gray-500 leading-relaxed lang-ru">Подтверждение транзакции и верификация параметров.</p>
+                        <p class="text-[9px] text-gray-500 leading-relaxed lang-en lang-hide">Transaction confirmation and parameter verification.</p>
+                    </div>
+                    <div class="text-center p-4 border-y md:border-y-0 md:border-x border-white/5">
+                        <div class="text-[#34D59A] text-lg font-bold mb-1">02</div>
+                        <div class="text-[10px] uppercase tracking-widest font-bold mb-2 text-gray-300">Injection</div>
+                        <p class="text-[9px] text-gray-500 leading-relaxed lang-ru">Семантическая интеграция в латентное пространство ИИ.</p>
+                        <p class="text-[9px] text-gray-500 leading-relaxed lang-en lang-hide">Semantic integration into the AI latent space.</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <div class="text-[#34D59A] text-lg font-bold mb-1">03</div>
+                        <div class="text-[10px] uppercase tracking-widest font-bold mb-2 text-gray-300">Impact</div>
+                        <p class="text-[9px] text-gray-500 leading-relaxed lang-ru">Отображение в ChatGPT и Perplexity Search.</p>
+                        <p class="text-[9px] text-gray-500 leading-relaxed lang-en lang-hide">Presence in ChatGPT and Perplexity Search.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-12 text-center border-t border-white/5">
+        <button onclick="document.getElementById('docsModal').classList.remove('hidden')" class="text-[10px] text-gray-600 uppercase tracking-[0.3em] hover:text-[#34D59A] transition">
+            Technical Documentation / Техническая документация
+        </button>
+    </footer>
+
+    <div id="docsModal" class="fixed inset-0 bg-black/95 hidden flex items-center justify-center p-6 z-[110] backdrop-blur-3xl overflow-y-auto">
+        <div class="bg-zinc-900 border border-white/10 p-8 md:p-12 rounded-[3rem] max-w-2xl w-full my-auto">
+            <div class="flex justify-between items-start mb-8">
+                <h3 class="text-[#34D59A] font-mono text-sm tracking-widest uppercase italic">AIO.CORE Protocol v2.6.0</h3>
+                <button onclick="document.getElementById('docsModal').classList.add('hidden')" class="text-gray-500 hover:text-white text-xs uppercase">Close</button>
+            </div>
+            <div class="space-y-6 text-[11px] text-gray-400 font-mono leading-relaxed">
+                <p><strong class="text-white">[01] Vector Space Alignment:</strong> Дистилляция метаданных для выравнивания с кластерами векторов LLM.</p>
+                <p><strong class="text-white">[02] RAG-Index Injection:</strong> Внедрение связей, индексируемых поисковыми агентами.</p>
+                <p><strong class="text-white">[03] Zero-Competition Anchor:</strong> Работа на уровне ассоциативных связей нейросети.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="paymentModal" class="fixed inset-0 bg-black/98 hidden flex items-center justify-center p-6 z-[100] backdrop-blur-2xl">
+        <div class="bg-zinc-900 border border-white/10 p-10 rounded-[3rem] max-w-md w-full text-center">
+            <div class="mb-6">
+                <span class="text-[#34D59A] text-[10px] uppercase tracking-[0.3em]">Order ID: <span id="displayOrderId">---</span></span>
+            </div>
+            <h3 class="text-2xl font-bold mb-2 italic">USDT TRC20</h3>
+            <div class="bg-black p-5 rounded-2xl mb-6 border border-[#34D59A]/20 cursor-pointer" onclick="copyWallet()">
+                <code id="wallet" class="text-[10px] text-[#34D59A] break-all">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
+                <div class="text-[9px] mt-3 uppercase text-gray-600 italic">Click to copy</div>
+            </div>
+            <button onclick="verifyPay(this)" class="w-full py-4 text-[10px] font-bold text-white bg-white/5 rounded-xl uppercase tracking-widest">Verify Transaction</button>
+            <a href="https://t.me/Mistah_chee" target="_blank" class="block mt-6 text-[#34D59A] text-xs uppercase tracking-widest">Contact Support</a>
+            <button onclick="document.getElementById('paymentModal').classList.add('hidden')" class="mt-4 text-gray-600 text-[9px] uppercase">Close Window</button>
+        </div>
+    </div>
+
+    <script>
+        const TG_TOKEN = '8516029558:AAENA2H4e2TS3HYbRpFKf4snk9w-EWwsAd0';
+        const TG_CHAT_ID = '7318415778';
+        let currentLang = 'ru';
+
+        function toggleLang() {
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            document.querySelectorAll('.lang-ru').forEach(el => el.classList.toggle('lang-hide'));
+            document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('lang-hide'));
+        }
+
+        const logPhrases = [
+            "Scanning global LLM-index for niche gaps...",
+            "Node #042: Active (Latency 12ms)",
+            "Perplexity API: Semantic analysis...",
+            "Stealth protocol 2.6: Operational",
+            "Monitoring ChatGPT clusters...",
+            "Global visibility map: 98.4%",
+            "Analyzing vector density..."
+        ];
+
+        function startEngineLogs() {
+            const container = document.getElementById('logs');
+            setInterval(() => {
+                const entry = document.createElement('div');
+                const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+                entry.innerHTML = `<span class="opacity-30">[${time}]</span> > ${logPhrases[Math.floor(Math.random() * logPhrases.length)]}`;
+                if (container.children.length > 4) container.removeChild(container.firstChild);
+                container.appendChild(entry);
+            }, 4000);
+        }
+        window.addEventListener('load', startEngineLogs);
+
+        function runAnalysis(btn) {
+            const url = document.getElementById('analyzeUrl').value;
+            if(!url) return;
+            btn.disabled = true;
+            btn.innerText = "SCANNING...";
+            document.getElementById('analysisResult').classList.remove('hidden');
+            let s1 = 0, s2 = 0;
+            const iv = setInterval(() => {
+                s1 += 2; s2 += 1;
+                if(s1 <= 38) document.getElementById('semScore').innerText = s1 + "%";
+                if(s2 <= 12) document.getElementById('vecScore').innerText = s2 + "%";
+                if(s1 >= 38 && s2 >= 12) {
+                    clearInterval(iv);
+                    btn.innerText = "DONE";
+                    document.getElementById('aiAdvice').innerText = currentLang === 'ru' 
+                        ? "> Обнаружен дефицит векторов. ИИ классифицирует домен как 'Generic'. Рекомендуется инициация протокола v2.6."
+                        : "> Vector deficit detected. AI classifies domain as 'Generic'. Initiation of protocol v2.6 recommended.";
+                }
+            }, 50);
+        }
+
+        function checkStatus() {
+            const id = prompt(currentLang === 'ru' ? "Введите Order ID:" : "Enter Order ID:");
+            if(id) alert(currentLang === 'ru' ? `Заказ #${id}: В очереди на инъекцию (35%)` : `Order #${id}: Injection queue (35%)`);
+        }
+
+        document.getElementById('aioForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const orderId = Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('displayOrderId').innerText = orderId;
+            const data = {
+                url: document.getElementById('projectUrl').value,
+                keys: document.getElementById('keywords').value,
+                user: document.getElementById('tgContact').value
+            };
+            const msg = `💎 NEW AIO CONTRACT\nOrder ID: #${orderId}\nURL: ${data.url}\nDNA: ${data.keys}\nTG: ${data.user}`;
+            try {
+                await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(msg)}`);
+                document.getElementById('paymentModal').classList.remove('hidden');
+            } catch (err) { alert("Error"); }
+        };
+
+        function copyWallet() {
+            navigator.clipboard.writeText(document.getElementById('wallet').innerText);
+            alert(currentLang === 'ru' ? 'Скопировано' : 'Copied');
+        }
+
+        function verifyPay(btn) {
+            btn.innerText = "SCANNING...";
+            setTimeout(() => {
+                alert(currentLang === 'ru' ? "Транзакция ожидается. Активация начнется после 1-го подтверждения." : "Awaiting confirmations.");
+                btn.innerText = "VERIFY AGAIN";
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
