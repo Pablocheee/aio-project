@@ -7,20 +7,14 @@ export default async function handler(req, res) {
     try {
         const { message, history = [], isFinal, clientData } = req.body;
 
-        // 1. ПРОВЕРКА КЛЮЧЕЙ
         const GROQ_KEY = process.env.GROQ_API_KEY;
         const TG_TOKEN = process.env.TG_TOKEN;
         const TG_CHAT_ID = process.env.TG_CHAT_ID;
 
-        // 2. ФИНАЛЬНЫЙ ШАГ: ОТПРАВКА В TELEGRAM
+        // 1. ФИНАЛЬНЫЙ ШАГ: ОТПРАВКА В TELEGRAM
         if (isFinal && clientData) {
             const orderId = Math.floor(100000 + Math.random() * 900000);
-            const report = `
-🚀 **NEW AI CONTRACT #${orderId}**
-🌐 **URL:** ${clientData.url}
-📱 **Contact:** ${clientData.contact}
-⏳ **Status:** Ready for analysis
-            `;
+            const report = `🚀 *NEW AI STRATEGY CONTRACT #${orderId}*\n\n🌐 *URL:* ${clientData.url}\n📱 *Contact:* ${clientData.contact}\n💎 *Status:* High-Priority Analysis`;
 
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
                 method: 'POST',
@@ -35,7 +29,7 @@ export default async function handler(req, res) {
             return res.status(200).json({ reply: "Finalized", orderId });
         }
 
-        // 3. ЗАПРОС К ИИ (GROQ + LLAMA 3)
+        // 2. ЗАПРОС К ИИ (GROQ + LLAMA 3)
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -47,31 +41,36 @@ export default async function handler(req, res) {
                 messages: [
                     { 
                         role: "system", 
-                        content: `Ты — ИИ-сотрудник технологической компании AIO.CORE. 
-                        ТВОЙ СТИЛЬ: Лаконичный, холодный, профессиональный. Никаких лишних слов и приветствий.
-                        ТВОЯ ЗАДАЧА: Собрать у пользователя URL проекта и его контакт (TG/Email).
-                        ИНСТРУКЦИЯ: 
-                        - Если пользователь ничего не прислал, запроси URL. 
-                        - Если есть URL, но нет контакта — запроси контакт.
-                        - Пиши не более 1-2 коротких предложений.
-                        - Как только получил ОБА значения, напиши строго: "Данные приняты. ПАКЕТ СФОРМИРОВАН."` 
+                        content: `Ты — ведущий ИИ-стратег и лучший сотрудник компании AIO.CORE. 
+                        ТВОЙ СТИЛЬ: Премиальный, уверенный, экспертный. Ты общаешься с клиентом как высокоуровневый партнер.
+                        
+                        ИНСТРУКЦИЯ ПО ОБЩЕНИЮ:
+                        1. ПРИВЕТСТВИЕ: Если клиент здоровается, ответь вежливо и статусно (например: "Приветствую. Я готов к анализу вашего проекта."). 
+                        2. СТРАТЕГИЯ: Твоя цель — четко получить URL сайта и контакт (TG/Email). 
+                        3. ЛАКОНИЧНОСТЬ: Не пиши длинных текстов. Максимум 2-3 предложения. 
+                        
+                        ЛОГИКА ВОПРОСОВ:
+                        - Если нет URL, запроси его для начала семантического разбора.
+                        - Если есть URL, но нет контакта, запроси контакт для завершения формирования пакета.
+                        
+                        ФИНАЛ: Как только у тебя есть ОБА значения, напиши строго: "Благодарю. Анализ запущен. ПАКЕТ СФОРМИРОВАН."` 
                     },
-                    // Преобразуем историю чата в формат OpenAI
+                    // Корректная обработка истории сообщений
                     ...history.map(h => ({
                         role: h.role === 'model' ? 'assistant' : 'user',
-                        content: Array.isArray(h.parts) ? h.parts[0].text : h.content
+                        content: Array.isArray(h.parts) ? h.parts[0].text : (h.content || "")
                     })),
-                    { role: "user", content: message || "Инициализация" }
+                    { role: "user", content: message || "Привет" }
                 ],
-                temperature: 0.5, // Делаем его более предсказуемым
-                max_tokens: 150
+                temperature: 0.6, 
+                max_tokens: 250
             })
         });
 
         const data = await response.json();
 
         if (data.error) {
-            console.error("GROQ_API_ERROR:", data.error);
+            console.error("GROQ_ERROR:", data.error);
             return res.status(500).json({ error: data.error.message });
         }
 
@@ -79,7 +78,7 @@ export default async function handler(req, res) {
         res.status(200).json({ reply: aiReply });
 
     } catch (e) {
-        console.error("SERVER_ERROR:", e);
+        console.error("SERVER_CRASH:", e);
         res.status(500).json({ error: "Internal Server Error", details: e.message });
     }
 }
