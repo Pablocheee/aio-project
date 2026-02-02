@@ -94,16 +94,40 @@
     </div>
 
     <script>
-        const TG_TOKEN = '8516029558:AAENA2H4e2TS3HYbRpFKf4snk9w-EWwsAd0';
+const TG_TOKEN = '8516029558:AAENA2H4e2TS3HYbRpFKf4snk9w-EWwsAd0';
         const TG_CHAT_ID = '7318415778';
         let currentLang = 'ru';
         let step = 0;
         let userData = { url: '', tg: '', email: '' };
 
         const ariaText = {
-            ru: ["Я ARIA. Укажите URL проекта для интеграции:", "Принято. Ваш контакт в Telegram:", "Ваш Email для получения отчетов:", "Синхронизация с узлами LLM... (5s)", "Слой готов. Ожидаю транзакцию."],
-            en: ["I am ARIA. Specify project URL for integration:", "Received. Your Telegram contact:", "Your Email for reports:", "Syncing with LLM nodes... (5s)", "Layer ready. Awaiting transaction."]
+            ru: [
+                "Я ARIA. Укажите URL проекта для интеграции:",
+                "Принято. Ваш контакт в Telegram:",
+                "Ваш Email для получения отчетов:",
+                "Синхронизация с узлами LLM... (5s)",
+                "Слой подготовлен. Ожидаю транзакцию 499 USDT.",
+                "Данные не распознаны. Укажите корректный параметр для протокола:"
+            ],
+            en: [
+                "I am ARIA. Specify project URL for integration:",
+                "Received. Your Telegram contact:",
+                "Your Email for reports:",
+                "Syncing with LLM nodes... (5s)",
+                "Layer ready. Awaiting 499 USDT transaction.",
+                "Input not recognized. Provide a valid parameter for the protocol:"
+            ]
         };
+
+        // ТА САМАЯ ФУНКЦИЯ, КОТОРОЙ НЕ ХВАТАЛО
+        function validate(val, currentStep) {
+            const v = val.toLowerCase();
+            if (v.includes("привет") || v.length < 2) return false;
+            
+            if (currentStep === 0) return v.includes('.'); // Проверка URL (наличие точки)
+            if (currentStep === 2) return v.includes('@'); // Проверка Email (наличие собаки)
+            return true; // Для TG просто пропускаем, если не "привет"
+        }
 
         function addMsg(txt, side='bot') {
             const win = document.getElementById('chat-win');
@@ -121,11 +145,27 @@
             addMsg(val, 'user');
             inp.value = '';
 
-            if(step === 0) { userData.url = val; step++; addMsg(ariaText[currentLang][1]); }
-            else if(step === 1) { userData.tg = val; step++; addMsg(ariaText[currentLang][2]); }
+            // Если данные не прошли валидацию
+            if (step < 3 && !validate(val, step)) {
+                addMsg(ariaText[currentLang][5]); // Просим ввести нормально
+                return;
+            }
+
+            if(step === 0) { 
+                userData.url = val; 
+                step++; 
+                setTimeout(() => addMsg(ariaText[currentLang][1]), 600); 
+            }
+            else if(step === 1) { 
+                userData.tg = val; 
+                step++; 
+                setTimeout(() => addMsg(ariaText[currentLang][2]), 600); 
+            }
             else if(step === 2) {
-                userData.email = val; step++;
+                userData.email = val; 
+                step++;
                 addMsg(ariaText[currentLang][3]);
+                
                 const orderId = Math.floor(100000 + Math.random() * 900000);
                 document.getElementById('displayOrderId').innerText = orderId;
                 
@@ -134,23 +174,25 @@
                     await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(msg)}`);
                     addMsg(ariaText[currentLang][4]);
                     document.getElementById('paymentModal').classList.remove('hidden');
-                }, 4000);
+                }, 5000);
             } else {
-                // Работа через твой api/chat.js
+                // Работа через ИИ (Groq) после того как все данные собраны
                 try {
                     const res = await fetch('/api/chat', {
                         method: 'POST',
                         body: JSON.stringify({ message: val, lang: currentLang })
                     });
                     const data = await res.json();
-                    addMsg(data.reply);
-                } catch(e) { addMsg("Neural Hub connection error."); }
+                    addMsg(data.reply || data.choices[0].message.content);
+                } catch(e) { 
+                    addMsg(currentLang === 'ru' ? "Узел перегружен. Повторите запрос." : "Node busy. Please retry."); 
+                }
             }
         }
 
         function closePayment() {
             document.getElementById('paymentModal').classList.add('hidden');
-            addMsg(currentLang === 'ru' ? "Окно закрыто. Есть вопросы?" : "Closed. Any questions?");
+            addMsg(currentLang === 'ru' ? "Счет в ожидании. Есть вопросы?" : "Invoice pending. Questions?");
         }
 
         function toggleLang() {
@@ -162,12 +204,13 @@
 
         function copyWallet() {
             navigator.clipboard.writeText(document.getElementById('wallet').innerText);
-            alert('Copied');
+            alert(currentLang === 'ru' ? 'Скопировано' : 'Copied');
         }
 
-        // Logs animation
+        // Анимация логов
         setInterval(() => {
             const logs = document.getElementById('logs');
+            if(!logs) return;
             const p = ["Scanning vectors...", "Node active...", "Syncing RAG...", "TRC20 monitor active..."];
             const entry = document.createElement('div');
             entry.innerHTML = `<span class="opacity-30">[${new Date().toLocaleTimeString()}]</span> > ${p[Math.floor(Math.random()*p.length)]}`;
@@ -175,7 +218,7 @@
             logs.appendChild(entry);
         }, 4000);
 
-        window.onload = () => addMsg(ariaText[currentLang][0]);
+        window.onload = () => setTimeout(() => addMsg(ariaText[currentLang][0]), 500);        window.onload = () => addMsg(ariaText[currentLang][0]);
     </script>
 </body>
 </html>
