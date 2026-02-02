@@ -5,18 +5,20 @@ export default async function handler(req, res) {
 
     const { message, history, isFinal, clientData } = req.body;
 
-    // Сценарий 1: Финальная стадия
     if (isFinal) {
         const orderId = Math.floor(100000 + Math.random() * 900000);
-        // Тут можно вставить отправку в ТГ
         console.log(`NEW ORDER #${orderId}:`, clientData);
         return res.status(200).json({ success: true, orderId: orderId.toString() });
     }
 
-    // Сценарий 2: Диалог с Grok
     try {
-        const apiKey = process.env.XAI_API_KEY; // Убедись, что ключ в ENV называется так
-        
+        const apiKey = process.env.XAI_API_KEY;
+
+        // Проверка ключа в ENV
+        if (!apiKey) {
+            return res.status(200).json({ reply: "ОШИБКА: XAI_API_KEY не установлен в настройках хостинга." });
+        }
+
         const response = await fetch('https://api.x.ai/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -24,15 +26,13 @@ export default async function handler(req, res) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: "grok-beta", // Или актуальная модель, например "grok-2"
+                model: "grok-beta", 
                 messages: [
                     {
                         role: "system",
-                        content: `Ты — ИИ-интерфейс системы AIO.CORE. 
-                        Твоя цель: получить URL и контакт клиента.
-                        1. Если прислали URL — подтверди "захват цели" и запроси контакт (TG/Email).
-                        2. Если прислали контакт — напиши строго: "ПАКЕТ СФОРМИРОВАН".
-                        Стиль: Лаконичный, хакерский, футуристичный.`
+                        content: `Ты — ИИ AIO.CORE. Получи URL и контакт. 
+                        1. При получении URL запроси контакт (TG/Email). 
+                        2. При получении контакта напиши строго: ПАКЕТ СФОРМИРОВАН.`
                     },
                     ...(history || []),
                     { role: "user", content: message }
@@ -43,16 +43,18 @@ export default async function handler(req, res) {
 
         const data = await response.json();
 
-        if (data.error) {
-            console.error("Grok API Error:", data.error);
-            return res.status(500).json({ reply: "Ошибка Grok: " + data.error.message });
+        // Исправленная логика обработки ошибок
+        if (data.error || !response.ok) {
+            const errorMsg = data.error?.message || data.message || JSON.stringify(data);
+            console.error("Grok Error:", errorMsg);
+            return res.status(200).json({ reply: `Ошибка Grok: ${errorMsg}` });
         }
 
-        const reply = data.choices[0].message.content;
+        const reply = data.choices?.[0]?.message?.content || "Ошибка: пустой ответ.";
         return res.status(200).json({ reply });
 
     } catch (error) {
         console.error("Server Error:", error);
-        return res.status(500).json({ reply: "Узел перегружен. Попробуйте еще раз." });
+        return res.status(200).json({ reply: `Сбой системы: ${error.message}` });
     }
 }
