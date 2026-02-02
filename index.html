@@ -17,7 +17,7 @@
         .lang-hide { display: none; }
         #aiChat::-webkit-scrollbar { width: 4px; }
         #aiChat::-webkit-scrollbar-thumb { background: #34D59A; border-radius: 10px; }
-        .btn-back { color: rgba(255,255,255,0.4); font-size: 10px; text-transform: uppercase; margin-top: 20px; transition: 0.3s; }
+        .btn-back { color: rgba(255,255,255,0.4); font-size: 10px; text-transform: uppercase; margin-top: 20px; transition: 0.3s; cursor: pointer; }
         .btn-back:hover { color: #34D59A; }
     </style>
 </head>
@@ -32,6 +32,14 @@
     </header>
 
     <main class="max-w-5xl mx-auto px-6 py-12">
+        
+        <section class="text-center mb-24">
+            <h1 class="text-5xl md:text-8xl font-bold leading-tight tracking-tighter mb-8 uppercase">
+                <span class="lang-ru">Семантическая <span class="glow-text italic">индексация</span></span>
+                <span class="lang-en lang-hide">Semantic <span class="glow-text italic">Indexing</span></span>
+            </h1>
+        </section>
+
         <section class="max-w-2xl mx-auto mb-20">
             <div class="glass-card p-10 rounded-[3rem] border-[#34D59A]/20">
                 <h3 class="text-xl font-bold mb-6 uppercase text-center">Diagnostic Tool</h3>
@@ -71,86 +79,5 @@
                 <code id="wallet" class="text-[10px] text-[#34D59A] break-all">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
             </div>
             <button onclick="verifyPay(this)" class="w-full py-4 text-[10px] font-bold text-white bg-white/5 rounded-xl uppercase">Verify</button>
-            <button onclick="closeModal()" class="btn-back block w-full text-center mt-6">← Вернуться в чат</button>
-            <div id="payStatus" class="mt-4 text-[9px] text-gray-600 font-mono uppercase"></div>
-        </div>
-    </div>
-
-    <script>
-let chatHistory = [];
-
-function closeModal() { document.getElementById('paymentModal').classList.add('hidden'); }
-
-async function runAnalysis(externalUrl = null) {
-    const urlInput = externalUrl || document.getElementById('analyzeUrl').value;
-    if(!urlInput) return;
-    document.getElementById('analyzeUrl').value = urlInput;
-    
-    // Имитация анализа
-    document.getElementById('analysisResult').classList.remove('hidden');
-    animateValue("semScore", 0, Math.floor(Math.random() * 40 + 10), 1000);
-    document.getElementById('aiAdvice').innerText = "> Векторы обнаружены. Анализ структуры завершен.";
-}
-
-async function handleChat() {
-    const input = document.getElementById('chatInput');
-    const chat = document.getElementById('aiChat');
-    const userMsg = input.value.trim();
-    if(!userMsg) return;
-
-    // Если в сообщении есть точка, запускаем сканер сверху
-    if(userMsg.includes('.')) runAnalysis(userMsg);
-
-    chat.innerHTML += `<div class="text-gray-500 mt-2 italic">> User: ${userMsg}</div>`;
-    input.value = "";
-    chat.scrollTop = chat.scrollHeight;
-
-    try {
-        const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: userMsg, history: chatHistory })
-        });
-        const data = await response.json();
-        
-        chatHistory.push({ role: "user", content: userMsg });
-        chatHistory.push({ role: "assistant", content: data.reply });
-
-        chat.innerHTML += `<div class="text-[#34D59A] mt-2">> AI: ${data.reply}</div>`;
-        chat.scrollTop = chat.scrollHeight;
-
-        if (data.reply.includes("ПАКЕТ СФОРМИРОВАН")) {
-            setTimeout(() => {
-                chat.innerHTML += `<div class="text-white/40 mt-2 italic font-bold">> System: Генерация защищенного узла связи...</div>`;
-                chat.scrollTop = chat.scrollHeight;
-                setTimeout(async () => {
-                    const finalResp = await fetch('/api/chat', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ isFinal: true, clientData: { url: chatHistory[0]?.content, contact: userMsg } })
-                    });
-                    const finalData = await finalResp.json();
-                    document.getElementById('displayOrderId').innerText = finalData.orderId;
-                    document.getElementById('paymentModal').classList.remove('hidden');
-                }, 4000);
-            }, 1500);
-        }
-    } catch (e) { console.error(e); }
-}
-
-function animateValue(id, start, end, duration) {
-    const obj = document.getElementById(id);
-    let startTimestamp = null;
-    const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        obj.innerText = Math.floor(progress * (end - start) + start) + "%";
-        if (progress < 1) window.requestAnimationFrame(step);
-    };
-    window.requestAnimationFrame(step);
-}
-
-function copyWallet() { navigator.clipboard.writeText(document.getElementById('wallet').innerText); alert('Copied'); }
-    </script>
-</body>
-</html>
+            <div onclick="closeModal()" class="btn-back block w-full text-center mt-6">← Вернуться в чат</div>
+            <div id="payStatus" class="mt-4 text-[9px] text-gray-
