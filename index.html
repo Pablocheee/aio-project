@@ -7,15 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Space Grotesk', sans-serif; background: #050505; color: #fff; scroll-behavior: smooth; margin: 0; overflow-x: hidden; }
+        body { font-family: 'Space Grotesk', sans-serif; background: #050505; color: #fff; scroll-behavior: smooth; margin: 0; }
         .glow-text { color: #34D59A; text-shadow: 0 0 20px rgba(52, 213, 154, 0.4); }
         .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); }
-        .chat-input { background: transparent; border: none; border-bottom: 1px solid rgba(52, 213, 154, 0.3); outline: none; color: #34D59A; width: 100%; padding: 5px 0; font-family: monospace; }
         .lang-hide { display: none !important; }
-        .bot-msg { color: #34D59A; font-family: monospace; font-size: 13px; margin-bottom: 12px; }
-        .user-msg { color: #fff; font-family: monospace; font-size: 13px; margin-bottom: 12px; opacity: 0.8; text-align: right; }
-        .btn-main { background: #34D59A; color: #000; font-weight: 700; transition: 0.4s; cursor: pointer; border: none; padding: 15px; border-radius: 12px; width: 100%; text-transform: uppercase; }
-        .btn-main:hover { transform: scale(1.02); box-shadow: 0 5px 20px rgba(52, 213, 154, 0.3); }
+        /* Chat Styles */
+        #chat-window { scrollbar-width: none; -ms-overflow-style: none; }
+        #chat-window::-webkit-scrollbar { display: none; }
+        .bot-msg { color: #34D59A; font-family: monospace; font-size: 13px; line-height: 1.5; margin-bottom: 15px; text-align: left; }
+        .user-msg { color: #fff; font-family: monospace; font-size: 13px; opacity: 0.7; margin-bottom: 15px; text-align: right; }
+        .chat-input { background: transparent; border: none; border-bottom: 1px solid rgba(52, 213, 154, 0.3); outline: none; color: #34D59A; width: 100%; padding: 8px 0; font-family: monospace; }
     </style>
 </head>
 <body>
@@ -33,145 +34,165 @@
                 <span class="lang-en lang-hide">Semantic <span class="glow-text italic">Indexing</span> for LLM</span>
             </h1>
             <p class="text-gray-500 text-lg max-w-2xl mx-auto font-light">
-                <span class="lang-ru">Автономный протокол интеграции данных в контекстные окна нейросетей. Устранение конкуренции через stealth-инъекции.</span>
-                <span class="lang-en lang-hide">Autonomous data integration for LLM. Eliminating competition via stealth injections.</span>
+                <span class="lang-ru">Автономный протокол интеграции данных в контекстные окна нейросетей. Устранение конкуренции на уровне векторов данных.</span>
+                <span class="lang-en lang-hide">Autonomous data integration for LLM. Eliminating competition at the vector data level.</span>
             </p>
         </section>
 
-        <section id="ai-chat" class="max-w-2xl mx-auto">
-            <div class="glass-card rounded-[2.5rem] border-white/10 overflow-hidden flex flex-col h-[500px]">
-                <div class="p-4 border-b border-white/5 bg-white/5 flex justify-between items-center">
-                    <div class="flex items-center gap-2">
+        <section id="order" class="max-w-2xl mx-auto relative mb-20">
+            <div class="glass-card rounded-[3rem] border-white/10 overflow-hidden flex flex-col h-[550px]">
+                <div class="p-5 border-b border-white/5 bg-white/5 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
                         <span class="w-2 h-2 bg-[#34D59A] rounded-full animate-pulse"></span>
-                        <span class="text-[10px] uppercase tracking-widest opacity-60">AI Operator: ARIA v2.0</span>
+                        <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-[#34D59A]">Operator: ARIA v2.6</span>
                     </div>
                 </div>
                 
-                <div id="chat-window" class="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-hide">
+                <div id="chat-window" class="flex-1 overflow-y-auto p-8 space-y-4">
                     </div>
 
-                <div class="p-6 bg-black/40 border-t border-white/5">
-                    <div id="chat-controls" class="flex gap-4">
-                        <input type="text" id="userInput" class="chat-input" placeholder="Введите сообщение..." onkeypress="handleKey(event)">
-                        <button onclick="processInput()" class="text-[#34D59A] hover:scale-110 transition">➤</button>
+                <div class="p-8 bg-black/40 border-t border-white/5">
+                    <div class="flex gap-4">
+                        <input type="text" id="userInput" class="chat-input" placeholder="Введите сообщение..." onkeypress="if(event.key==='Enter') processChat()">
+                        <button onclick="processChat()" class="text-[#34D59A] font-bold text-xl hover:scale-110 transition">➤</button>
                     </div>
                 </div>
             </div>
         </section>
 
+        <section class="grid md:grid-cols-2 gap-6 mb-20 max-w-4xl mx-auto text-left">
+            <div class="glass-card p-8 rounded-[2rem] border-l-2 border-[#34D59A]">
+                <div class="text-[10px] text-gray-500 uppercase mb-2">Protocol: L-Injection</div>
+                <h4 class="text-xl font-bold mb-2 uppercase">Web3 Analytics</h4>
+                <p class="text-xs text-gray-500 leading-relaxed">
+                    <span class="lang-ru">Интеграция проекта в RAG-системы. Приоритет в 92% тематических сессий.</span>
+                    <span class="lang-en lang-hide">RAG-system integration. Priority in 92% of thematic sessions.</span>
+                </p>
+            </div>
+            <div class="glass-card p-8 rounded-[2rem] border-l-2 border-[#34D59A]">
+                <div class="text-[10px] text-gray-500 uppercase mb-2">Protocol: Stealth-Zero</div>
+                <h4 class="text-xl font-bold mb-2 uppercase">Semantic Hub</h4>
+                <p class="text-xs text-gray-500 leading-relaxed">
+                    <span class="lang-ru">Закрепление отпечатка в stealth пространстве модели. Стабильное цитирование.</span>
+                    <span class="lang-en lang-hide">Fingerprinting in the stealth model space. Stable citations.</span>
+                </p>
+            </div>
+        </section>
     </main>
 
     <div id="paymentModal" class="fixed inset-0 bg-black/98 hidden flex items-center justify-center p-6 z-[100] backdrop-blur-2xl">
         <div class="bg-zinc-900 border border-white/10 p-10 rounded-[3rem] max-w-md w-full text-center">
-            <div class="mb-6"><span class="text-[#34D59A] text-[10px] uppercase tracking-[0.3em]">Order ID: <span id="displayOrderId">#449120</span></span></div>
-            <h3 class="text-2xl font-bold mb-2 text-white">499 USDT (TRC20)</h3>
-            <p class="text-gray-500 text-xs mb-8">Send payment to Tonkeeper / TRC20 destination:</p>
-            
+            <div class="mb-6"><span class="text-[#34D59A] text-[10px] uppercase tracking-[0.3em]">Status: Ready for Injection</span></div>
+            <h3 class="text-2xl font-bold mb-2">499 USDT</h3>
+            <p class="text-gray-400 text-xs mb-8">Network: Tonkeeper / TRC20</p>
             <div class="bg-black p-5 rounded-2xl mb-6 border border-[#34D59A]/20 cursor-pointer" onclick="copyWallet()">
                 <code id="wallet" class="text-[10px] text-[#34D59A] break-all">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
-                <div class="text-[8px] mt-3 uppercase text-gray-600">Click to copy</div>
+                <div class="text-[8px] mt-3 uppercase text-gray-600">Нажми для копирования</div>
             </div>
-
-            <button onclick="closePayment()" class="btn-main mb-4">Вернуться в чат</button>
-            <a href="https://t.me/Mistah_chee" target="_blank" class="block text-[#34D59A] font-bold text-[10px] uppercase tracking-widest">Support @Mistah_chee</a>
+            <button onclick="closePayment()" class="w-full bg-[#34D59A] text-black font-bold py-4 rounded-xl uppercase text-xs tracking-widest hover:scale-105 transition">Вернуться в чат</button>
         </div>
     </div>
 
     <script>
+        // --- CONFIGURATION ---
         const TG_TOKEN = '8516029558:AAENA2H4e2TS3HYbRpFKf4snk9w-EWwsAd0';
         const TG_CHAT_ID = '7318415778';
-        
+        const GROQ_KEY = 'ВСТАВЬ_СВОЙ_КЛЮЧ_СЮДА'; 
+
         let step = 0;
-        let userData = { site: '', contact: '', email: '' };
+        let userData = { site: '', tg: '', email: '' };
         let currentLang = 'ru';
 
-        const responses = {
+        const dialog = {
             ru: {
-                welcome: "Приветствую. Я оператор AIO.CORE. Для начала stealth-интеграции, укажите URL вашего проекта:",
-                askContact: "Принято. Укажите ваш Telegram для связи:",
-                askEmail: "И последнее — ваш Email для получения отчетов:",
-                processing: "Запуск семантического сканирования. Синхронизация узлов...",
-                success: "Анализ завершен. Векторное окно готово к инъекции. Ожидаю оплату протокола.",
-                guarantees: "Гарантии: Фиксация в топ-3 ответах Perplexity/GPT в течение 72 часов. Если индекс не закрепится — возврат 100%.",
-                benefit: "Вы получите: Органический трафик из ИИ-поисковиков, который невозможно заблокировать или перебить рекламой."
+                start: "Система активна. Я ARIA. Укажите сайт или проект для stealth-интеграции:",
+                tg: "Принято. Ваш контакт в Telegram для связи:",
+                email: "И последнее — ваш Email для получения отчетов:",
+                load: "Инициализация семантической инъекции... Синхронизация векторов (5s)",
+                done: "Слой подготовлен. Ожидаю транзакцию 499 USDT для финализации."
             },
             en: {
-                welcome: "Greetings. I am ARIA, AIO.CORE operator. To start stealth integration, specify your project URL:",
-                askContact: "Received. Specify your Telegram for contact:",
-                askEmail: "And finally — your Email for reports:",
-                processing: "Launching semantic scan. Syncing nodes...",
-                success: "Analysis complete. Vector window ready for injection. Awaiting protocol payment.",
-                guarantees: "Guarantees: Top-3 placement in Perplexity/GPT responses within 72 hours. 100% refund if index fails.",
-                benefit: "You get: Organic AI traffic that cannot be blocked or outbid by ads."
+                start: "System active. I am ARIA. Specify the site or project for stealth integration:",
+                tg: "Received. Your Telegram handle for contact:",
+                email: "Finally — your Email for report delivery:",
+                load: "Initializing semantic injection... Syncing vectors (5s)",
+                done: "Layer prepared. Awaiting 499 USDT transaction to finalize."
             }
         };
 
-        function addMsg(text, type = 'bot') {
+        function addMsg(text, type='bot') {
             const win = document.getElementById('chat-window');
-            const div = document.createElement('div');
-            div.className = type === 'bot' ? 'bot-msg' : 'user-msg';
-            div.innerHTML = type === 'bot' ? `> ${text}` : `${text} _`;
-            win.appendChild(div);
+            const d = document.createElement('div');
+            d.className = type === 'bot' ? 'bot-msg' : 'user-msg';
+            d.innerHTML = type === 'bot' ? `> ${text}` : `${text} _`;
+            win.appendChild(d);
             win.scrollTop = win.scrollHeight;
         }
 
-        async function processInput() {
+        async function processChat() {
             const input = document.getElementById('userInput');
             const val = input.value.trim();
             if(!val) return;
-
             addMsg(val, 'user');
             input.value = '';
 
-            // Обработка вопросов ПОСЛЕ оплаты/формы
-            if (val.toLowerCase().includes('гарант') || val.toLowerCase().includes('guarante')) {
-                addMsg(responses[currentLang].guarantees); return;
-            }
-            if (val.toLowerCase().includes('получу') || val.toLowerCase().includes('benefit') || val.toLowerCase().includes('зачем')) {
-                addMsg(responses[currentLang].benefit); return;
-            }
-
+            // Шаги сбора данных
             if(step === 0) {
-                userData.site = val;
-                step++;
-                setTimeout(() => addMsg(responses[currentLang].askContact), 600);
+                userData.site = val; step++;
+                setTimeout(() => addMsg(dialog[currentLang].tg), 600);
             } else if(step === 1) {
-                userData.contact = val;
-                step++;
-                setTimeout(() => addMsg(responses[currentLang].askEmail), 600);
+                userData.tg = val; step++;
+                setTimeout(() => addMsg(dialog[currentLang].email), 600);
             } else if(step === 2) {
-                userData.email = val;
-                step++;
-                addMsg(responses[currentLang].processing);
+                userData.email = val; step++;
+                addMsg(dialog[currentLang].load);
                 
-                // 5 sec loading
+                // Эмуляция загрузки и отправка в ТГ
                 setTimeout(async () => {
-                    await sendToTG();
-                    addMsg(responses[currentLang].success);
+                    await sendReport();
+                    addMsg(dialog[currentLang].done);
                     document.getElementById('paymentModal').classList.remove('hidden');
                 }, 5000);
             } else {
-                addMsg(currentLang === 'ru' ? "Протокол в ожидании оплаты. Могу я ответить на вопросы о гарантиях?" : "Protocol awaiting payment. Shall I answer about guarantees?");
+                // После сбора данных — свободное общение через GROQ
+                const aiResponse = await askGroq(val);
+                addMsg(aiResponse);
             }
         }
 
-        async function sendToTG() {
-            const msg = `🚀 **NEW CLIENT FROM CHAT**\nSite: ${userData.site}\nTG: ${userData.contact}\nEmail: ${userData.email}`;
+        async function askGroq(text) {
+            try {
+                const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        model: "llama-3.3-70b-versatile",
+                        messages: [
+                            { role: "system", content: `Ты — ARIA, ИИ-оператор AIO.CORE. Твой стиль: краткий, технический, элитный. Ты продаешь услуги stealth-индексации за 499 USDT. Гарантии: топ-3 в ответах ИИ за 72 часа. Отвечай на языке пользователя (${currentLang}).` },
+                            { role: "user", content: text }
+                        ]
+                    })
+                });
+                const data = await res.json();
+                return data.choices[0].message.content;
+            } catch { return "Error connecting to Neural Hub."; }
+        }
+
+        async function sendReport() {
+            const msg = `🚀 **NEW ORDER**\nSite: ${userData.site}\nTG: ${userData.tg}\nEmail: ${userData.email}`;
             await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
         }
 
-        function handleKey(e) { if(e.key === 'Enter') processInput(); }
-
         function toggleLang() {
             currentLang = currentLang === 'ru' ? 'en' : 'ru';
-            document.querySelectorAll('.lang-ru').forEach(el => el.classList.toggle('lang-hide', currentLang !== 'ru'));
-            document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('lang-hide', currentLang !== 'en'));
+            document.querySelectorAll('.lang-ru').forEach(e => e.classList.toggle('lang-hide', currentLang !== 'ru'));
+            document.querySelectorAll('.lang-en').forEach(e => e.classList.toggle('lang-hide', currentLang !== 'en'));
             document.getElementById('userInput').placeholder = currentLang === 'ru' ? "Введите сообщение..." : "Type a message...";
         }
 
         function closePayment() {
             document.getElementById('paymentModal').classList.add('hidden');
-            addMsg(currentLang === 'ru' ? "Счет закрыт. Какие у вас вопросы по гарантиям или результатам?" : "Invoice closed. Any questions regarding guarantees or results?");
+            addMsg(currentLang === 'ru' ? "Счет временно закрыт. Есть вопросы по реализации?" : "Invoice paused. Any questions about the implementation?");
         }
 
         function copyWallet() {
@@ -179,9 +200,7 @@
             alert('Copied');
         }
 
-        window.onload = () => {
-            setTimeout(() => addMsg(responses[currentLang].welcome), 1000);
-        };
+        window.onload = () => setTimeout(() => addMsg(dialog[currentLang].start), 1000);
     </script>
 </body>
 </html>
