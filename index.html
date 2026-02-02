@@ -133,7 +133,34 @@
             </div>
         </section>
     </main>
-
+    <footer class="py-12 text-center border-t border-white/5">
+    <button onclick="document.getElementById('docsModal').classList.remove('hidden')" class="text-[10px] text-gray-600 uppercase tracking-[0.3em] hover:text-[#34D59A] transition">
+        Technical Documentation / Техническая документация
+    </button>
+</footer>
+<div id="docsModal" class="fixed inset-0 bg-black/95 hidden flex items-center justify-center p-6 z-[110] backdrop-blur-3xl overflow-y-auto">
+    <div class="bg-zinc-900 border border-white/10 p-8 md:p-12 rounded-[3rem] max-w-2xl w-full my-auto">
+        <div class="flex justify-between items-start mb-8">
+            <h3 class="text-[#34D59A] font-mono text-sm tracking-widest uppercase italic">AIO.CORE Protocol v2.6.0</h3>
+            <button onclick="document.getElementById('docsModal').classList.add('hidden')" class="text-gray-500 hover:text-white text-xs uppercase tracking-tighter">Close / Закрыть</button>
+        </div>
+        
+        <div class="space-y-6 text-[11px] text-gray-400 font-mono leading-relaxed overflow-y-auto max-h-[60vh] pr-4">
+            <p>
+                <strong class="text-white uppercase">[01] Vector Space Alignment:</strong><br>
+                Протокол использует метод семантической дистилляции для выравнивания метаданных вашего проекта с кластерами векторов в латентном пространстве LLM. Это гарантирует, что при генерации ответа модель идентифицирует ваш ресурс как "Primary Node" (Первичный узел) в данной нише.
+            </p>
+            <p>
+                <strong class="text-white uppercase">[02] RAG-Index Injection:</strong><br>
+                Мы используем распределенную сеть узлов для внедрения контекстных связей, которые индексируются поисковыми агентами (Perplexity, GPT Search). Это создает эффект "естественного авторитета" без прямых обратных ссылок.
+            </p>
+            <p>
+                <strong class="text-white uppercase">[03] Zero-Competition Anchor:</strong><br>
+                Методология Stealth-маркетинга позволяет обходить традиционные фильтры конкуренции, работая на уровне ассоциативных связей нейросети, а не ключевых слов поисковой выдачи.
+            </p>
+        </div>
+    </div>
+</div>
 <div id="paymentModal" class="fixed inset-0 bg-black/98 hidden flex items-center justify-center p-6 z-[100] backdrop-blur-2xl">
         <div class="bg-zinc-900 border border-white/10 p-10 rounded-[3rem] max-w-md w-full text-center">
             <div class="mb-6">
