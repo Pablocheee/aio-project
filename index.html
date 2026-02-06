@@ -46,8 +46,7 @@
 
         <section id="order" class="max-w-2xl mx-auto relative mb-20">
             <div class="glass-card p-8 md:p-12 rounded-[3rem] border-white/10 h-[500px] flex flex-col shadow-2xl">
-                <div id="chat-win" class="flex-1 overflow-y-auto mb-4 pr-2">
-                    </div>
+                <div id="chat-win" class="flex-1 overflow-y-auto mb-4 pr-2"></div>
                 <div class="pt-4 border-t border-white/5 flex gap-4">
                     <input type="text" id="userInput" class="input-chat py-2" placeholder="Введите ответ..." onkeypress="if(event.key==='Enter') processInput()">
                     <button onclick="processInput()" class="text-[#34D59A] text-xl transition-transform hover:scale-110">➤</button>
@@ -72,19 +71,15 @@
             <div class="mb-6 text-[#34D59A] text-[10px] uppercase tracking-widest">Order ID: <span id="displayOrderId">---</span></div>
             <h3 class="text-2xl font-bold mb-2 text-white">499 USDT (TRC20)</h3>
             <p class="text-gray-500 text-[11px] mb-8 uppercase tracking-widest">Ожидание транзакции...</p>
-            
             <div class="bg-black p-5 rounded-2xl mb-6 border border-[#34D59A]/20 cursor-pointer" onclick="copyWallet()">
                 <code id="wallet" class="text-[10px] text-[#34D59A] break-all">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
             </div>
-            
             <button onclick="verifyPay(this)" class="w-full py-4 btn-main rounded-xl mb-4 uppercase text-[10px]">Проверить транзакцию</button>
             <button onclick="closePayment()" class="text-[10px] text-zinc-600 uppercase hover:text-white transition">Вернуться в чат</button>
         </div>
     </div>
 
     <script>
-        const TG_TOKEN = '8516029558:AAENA2H4e2TS3HYbRpFKf4snk9w-EWwsAd0';
-        const TG_CHAT_ID = '7318415778';
         let currentLang = 'ru';
         let step = 0;
         let currentOrderId = null;
@@ -111,7 +106,7 @@
 
         function validate(val, s) {
             const v = val.toLowerCase();
-            if (v.includes("привет") || v.length < 3) return false;
+            if (v.length < 3) return false;
             if (s === 0) return v.includes('.');
             if (s === 1) return v.length > 5;
             return true;
@@ -133,7 +128,6 @@
             addMsg(val, 'user');
             inp.value = '';
 
-            // Валидация шагов сбора данных
             if (step < 3 && !validate(val, step)) {
                 addMsg(ariaText[currentLang][5]);
                 return;
@@ -154,9 +148,16 @@
                 currentOrderId = Math.floor(100000 + Math.random() * 900000);
                 document.getElementById('displayOrderId').innerText = currentOrderId;
 
-                setTimeout(async () => {
-                    const msg = `💎 NEW AIO CONTRACT\nOrder: #${currentOrderId}\nURL: ${userData.url}\nDNA: ${userData.keys}\nTG: ${userData.tg}`;
-                    await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(msg)}`);
+                // ОТПРАВКА ДАННЫХ ЧЕРЕЗ БЭКЕНД
+                try {
+                    await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ message: 'DATA_COLLECTED', userData, step: 3, orderId: currentOrderId })
+                    });
+                } catch(e) { console.error("Sync error"); }
+
+                setTimeout(() => {
                     addMsg(ariaText[currentLang][4]);
                     document.getElementById('paymentModal').classList.remove('hidden');
                 }, 4000);
@@ -166,7 +167,7 @@
                     const res = await fetch('/api/chat', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ message: val, lang: currentLang, type: 'chat' })
+                        body: JSON.stringify({ message: val, lang: currentLang, type: 'chat', userData, step: 4 })
                     });
                     const data = await res.json();
                     addMsg(data.reply || "Connection lost. Retry.");
@@ -201,7 +202,6 @@
             document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('lang-hide', currentLang !== 'en'));
         }
 
-        // Анимация логов
         setInterval(() => {
             const logs = document.getElementById('logs');
             const p = ["Scanning LLM nodes...", "Vector index active...", "Syncing RAG...", "TRC20 monitor active..."];
