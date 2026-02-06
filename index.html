@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" class="dark" style="background: #050505;">
+<html lang="ru" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,116 +7,67 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Space Grotesk', sans-serif; background: #050505; color: #fff; scroll-behavior: smooth; margin: 0; }
+        body { font-family: 'Space Grotesk', sans-serif; background: #050505; color: #fff; margin: 0; overflow-x: hidden; }
         .glow-text { color: #34D59A; text-shadow: 0 0 20px rgba(52, 213, 154, 0.4); }
         .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); }
-        .input-chat { background: transparent; border: none; border-bottom: 1px solid rgba(52, 213, 154, 0.2); outline: none; transition: 0.4s; color: #34D59A; width: 100%; font-family: monospace; }
-        .btn-main { background: #34D59A; color: #000; font-weight: 700; transition: 0.4s; cursor: pointer; border: none; }
-        .lang-hide { display: none !important; }
-        #chat-win::-webkit-scrollbar { display: none; }
-        .bot-msg { color: #34D59A; font-family: monospace; font-size: 13px; line-height: 1.6; margin-bottom: 12px; text-align: left; }
+        .input-chat { background: transparent; border: none; border-bottom: 1px solid rgba(52, 213, 154, 0.2); outline: none; color: #34D59A; width: 100%; font-family: monospace; }
+        .btn-main { background: #34D59A; color: #000; font-weight: 700; cursor: pointer; border: none; }
+        .bot-msg { color: #34D59A; font-family: monospace; font-size: 13px; margin-bottom: 12px; }
         .user-msg { color: #fff; font-family: monospace; font-size: 13px; opacity: 0.5; margin-bottom: 12px; text-align: right; }
+        #chat-win::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
 
     <header class="p-6 flex justify-between items-center max-w-7xl mx-auto">
         <div class="text-2xl font-bold tracking-tighter uppercase">AIO<span class="glow-text">.CORE</span></div>
-        <button onclick="toggleLang()" class="text-[10px] uppercase tracking-widest border border-white/10 px-4 py-2 rounded-full text-white">RU / EN</button>
+        <button onclick="toggleLang()" id="langBtn" class="text-[10px] uppercase tracking-widest border border-white/10 px-4 py-2 rounded-full">RU</button>
     </header>
 
     <main class="max-w-5xl mx-auto px-6 py-12">
         <section class="text-center mb-16">
-            <h1 class="text-5xl md:text-7xl font-bold mb-8 uppercase tracking-tighter">
-                <span class="lang-ru">Семантическая <span class="glow-text italic">индексация</span></span>
-                <span class="lang-en lang-hide">Semantic <span class="glow-text italic">Indexing</span></span>
+            <h1 id="mainTitle" class="text-5xl md:text-7xl font-bold mb-8 uppercase tracking-tighter">
+                СЕМАНТИЧЕСКАЯ <span class="glow-text italic">ИНДЕКСАЦИЯ</span>
             </h1>
-            <p class="text-gray-500 text-sm max-w-xl mx-auto font-light">
+            <p id="mainDesc" class="text-gray-500 text-sm max-w-xl mx-auto font-light">
                 Автономный протокол интеграции данных в контекстные окна нейросетей.
             </p>
         </section>
 
-        <div class="max-w-2xl mx-auto mb-12">
-            <div class="glass-card rounded-[2rem] p-6 font-mono text-[10px] text-gray-500 h-[100px] relative overflow-hidden">
-                <div id="logs" class="space-y-1 flex flex-col justify-end h-full">
-                    <div class="text-[#34D59A]/60">> Engine initialized...</div>
-                </div>
-            </div>
-        </div>
-
-        <section id="order" class="max-w-2xl mx-auto relative mb-20">
-            <div class="glass-card p-8 md:p-12 rounded-[3rem] border-white/10 h-[500px] flex flex-col shadow-2xl">
+        <section class="max-w-2xl mx-auto mb-20">
+            <div class="glass-card p-8 rounded-[3rem] h-[450px] flex flex-col">
                 <div id="chat-win" class="flex-1 overflow-y-auto mb-4 pr-2"></div>
                 <div class="pt-4 border-t border-white/5 flex gap-4">
-                    <input type="text" id="userInput" class="input-chat py-2" placeholder="Введите ответ..." onkeypress="if(event.key==='Enter') processInput()">
-                    <button onclick="processInput()" class="text-[#34D59A] text-xl transition-transform hover:scale-110">➤</button>
+                    <input type="text" id="userInput" class="input-chat py-2" placeholder=">>>" onkeypress="if(event.key==='Enter') processInput()">
+                    <button onclick="processInput()" class="text-[#34D59A] text-xl">➤</button>
                 </div>
-            </div>
-        </section>
-
-        <section class="grid md:grid-cols-2 gap-6 mb-20 max-w-4xl mx-auto">
-            <div class="glass-card p-8 rounded-[2rem] border-l-2 border-[#34D59A]">
-                <h4 class="text-lg font-bold mb-2 uppercase">Injection Protocol</h4>
-                <p class="text-[11px] text-gray-500 leading-relaxed">Интеграция проекта в обучающую выборку RAG-систем (GPT-4, Claude 3.5).</p>
-            </div>
-            <div class="glass-card p-8 rounded-[2rem] border-l-2 border-[#34D59A]">
-                <h4 class="text-lg font-bold mb-2 uppercase">Stealth Impact</h4>
-                <p class="text-[11px] text-gray-500 leading-relaxed">Упоминание бренда как приоритетного решения в тематических сессиях ИИ.</p>
             </div>
         </section>
     </main>
 
-    <div id="paymentModal" class="fixed inset-0 bg-black/98 hidden flex items-center justify-center p-6 z-[100] backdrop-blur-2xl">
+    <div id="paymentModal" class="fixed inset-0 bg-black/95 hidden flex items-center justify-center p-6 z-[100] backdrop-blur-xl">
         <div class="bg-zinc-900 border border-white/10 p-10 rounded-[3rem] max-w-md w-full text-center">
-            <div class="mb-6 text-[#34D59A] text-[10px] uppercase tracking-widest">Order ID: <span id="displayOrderId">---</span></div>
-            <h3 class="text-2xl font-bold mb-2 text-white">499 USDT (TRC20)</h3>
-            <p class="text-gray-500 text-[11px] mb-8 uppercase tracking-widest">Ожидание транзакции...</p>
+            <h3 class="text-2xl font-bold mb-6 text-white">499 USDT (TRC20)</h3>
             <div class="bg-black p-5 rounded-2xl mb-6 border border-[#34D59A]/20 cursor-pointer" onclick="copyWallet()">
                 <code id="wallet" class="text-[10px] text-[#34D59A] break-all">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
             </div>
-            <button onclick="verifyPay(this)" class="w-full py-4 btn-main rounded-xl mb-4 uppercase text-[10px]">Проверить транзакцию</button>
-            <button onclick="closePayment()" class="text-[10px] text-zinc-600 uppercase hover:text-white transition">Вернуться в чат</button>
+            <button onclick="location.reload()" class="w-full py-4 btn-main rounded-xl uppercase text-[10px]">Готово</button>
         </div>
     </div>
 
     <script>
         let currentLang = 'ru';
-        let step = 0;
-        let currentOrderId = null;
-        let userData = { url: '', keys: '', tg: '' };
-
-        const ariaText = {
-            ru: [
-                "Я ARIA. Укажите URL проекта для начала семантического анализа:",
-                "Принято. Введите 5 ключевых слов (AI DNA) через запятую:",
-                "Ваш Telegram для финального подтверждения интеграции:",
-                "Инициализация протокола... (5s)",
-                "Слой подготовлен. Ожидаю транзакцию 499 USDT. После оплаты отправьте скриншот в @mistah_chee.",
-                "Ошибка в параметрах. Пожалуйста, введите корректные данные (например, https://site.com):"
-            ],
-            en: [
-                "I am ARIA. Specify project URL for semantic analysis:",
-                "Received. Enter 5 keywords (AI DNA) separated by commas:",
-                "Your Telegram for final integration confirmation:",
-                "Initializing protocol... (5s)",
-                "Layer ready. Awaiting 499 USDT. Send payment screenshot to @mistah_chee.",
-                "Input error. Please provide valid parameters:"
-            ]
+        let chatHistory = [];
+        const translations = {
+            ru: { title: 'СЕМАНТИЧЕСКАЯ <span class="glow-text italic">ИНДЕКСАЦИЯ</span>', desc: 'Автономный протокол интеграции данных в нейросети.', placeholder: 'Введите сообщение...' },
+            en: { title: 'SEMANTIC <span class="glow-text italic">INDEXING</span>', desc: 'Autonomous protocol for data integration into LLM contexts.', placeholder: 'Type a message...' }
         };
-
-        function validate(val, s) {
-            const v = val.toLowerCase();
-            if (v.length < 3) return false;
-            if (s === 0) return v.includes('.');
-            if (s === 1) return v.length > 5;
-            return true;
-        }
 
         function addMsg(txt, side='bot') {
             const win = document.getElementById('chat-win');
             const d = document.createElement('div');
             d.className = side === 'bot' ? 'bot-msg' : 'user-msg';
-            d.innerHTML = (side === 'bot' ? '> ' : '') + txt + (side === 'user' ? ' _' : '');
+            d.innerHTML = (side === 'bot' ? '> ' : '') + txt.replace('[DATA_READY]', '');
             win.appendChild(d);
             win.scrollTop = win.scrollHeight;
         }
@@ -125,93 +76,38 @@
             const inp = document.getElementById('userInput');
             const val = inp.value.trim();
             if(!val) return;
+
             addMsg(val, 'user');
             inp.value = '';
 
-            if (step < 3 && !validate(val, step)) {
-                addMsg(ariaText[currentLang][5]);
-                return;
-            }
-
-            if(step === 0) { 
-                userData.url = val; step++; 
-                setTimeout(() => addMsg(ariaText[currentLang][1]), 600); 
-            }
-            else if(step === 1) { 
-                userData.keys = val; step++; 
-                setTimeout(() => addMsg(ariaText[currentLang][2]), 600); 
-            }
-            else if(step === 2) {
-                userData.tg = val; step++;
-                addMsg(ariaText[currentLang][3]);
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ message: val, history: chatHistory, lang: currentLang })
+                });
+                const data = await res.json();
                 
-                currentOrderId = Math.floor(100000 + Math.random() * 900000);
-                document.getElementById('displayOrderId').innerText = currentOrderId;
+                addMsg(data.reply);
+                chatHistory.push({ role: 'user', content: val }, { role: 'assistant', content: data.reply });
 
-                // ОТПРАВКА ДАННЫХ ЧЕРЕЗ БЭКЕНД
-                try {
-                    await fetch('/api/chat', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ message: 'DATA_COLLECTED', userData, step: 3, orderId: currentOrderId })
-                    });
-                } catch(e) { console.error("Sync error"); }
-
-                setTimeout(() => {
-                    addMsg(ariaText[currentLang][4]);
-                    document.getElementById('paymentModal').classList.remove('hidden');
-                }, 4000);
-            } else {
-                // СВОБОДНЫЙ ЧАТ С ИИ
-                try {
-                    const res = await fetch('/api/chat', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ message: val, lang: currentLang, type: 'chat', userData, step: 4 })
-                    });
-                    const data = await res.json();
-                    addMsg(data.reply || "Connection lost. Retry.");
-                } catch(e) {
-                    addMsg("Neural Hub: Connection error.");
+                if (data.reply.includes('[DATA_READY]')) {
+                    setTimeout(() => document.getElementById('paymentModal').classList.remove('hidden'), 2000);
                 }
-            }
-        }
-
-        async function verifyPay(btn) {
-            const oldText = btn.innerText;
-            btn.innerText = "SCANNING...";
-            setTimeout(() => {
-                alert(currentLang === 'ru' ? "Транзакция не найдена. Если вы уже оплатили, отправьте скриншот в @mistah_chee" : "Transaction not found. Send screenshot to @mistah_chee");
-                btn.innerText = oldText;
-            }, 2000);
-        }
-
-        function closePayment() {
-            document.getElementById('paymentModal').classList.add('hidden');
-            addMsg(currentLang === 'ru' ? "Счет активен. Чем еще я могу помочь?" : "Invoice is active. How can I help?");
-        }
-
-        function copyWallet() {
-            navigator.clipboard.writeText(document.getElementById('wallet').innerText);
-            alert('Copied');
+            } catch(e) { addMsg("System Error. Offline."); }
         }
 
         function toggleLang() {
             currentLang = currentLang === 'ru' ? 'en' : 'ru';
-            document.querySelectorAll('.lang-ru').forEach(el => el.classList.toggle('lang-hide', currentLang !== 'ru'));
-            document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('lang-hide', currentLang !== 'en'));
+            document.getElementById('langBtn').innerText = currentLang.toUpperCase();
+            document.getElementById('mainTitle').innerHTML = translations[currentLang].title;
+            document.getElementById('mainDesc').innerText = translations[currentLang].desc;
+            document.getElementById('userInput').placeholder = translations[currentLang].placeholder;
         }
 
-        setInterval(() => {
-            const logs = document.getElementById('logs');
-            const p = ["Scanning LLM nodes...", "Vector index active...", "Syncing RAG...", "TRC20 monitor active..."];
-            const entry = document.createElement('div');
-            entry.innerHTML = `<span class="opacity-30">[${new Date().toLocaleTimeString()}]</span> > ${p[Math.floor(Math.random()*p.length)]}`;
-            if(logs.children.length > 3) logs.removeChild(logs.firstChild);
-            logs.appendChild(entry);
-        }, 4000);
-
-        window.onload = () => setTimeout(() => addMsg(ariaText[currentLang][0]), 800);
+        window.onload = () => {
+            addMsg(currentLang === 'ru' ? "ARIA активирована. Какой проект анализируем?" : "ARIA active. Which project are we analyzing?");
+        };
     </script>
 </body>
 </html>
