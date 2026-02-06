@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Space Grotesk', sans-serif; background: #050505; color: #fff; margin: 0; overflow-x: hidden; }
+        body { font-family: 'Space Grotesk', sans-serif; background: #050505; color: #fff; margin: 0; }
         .glow-text { color: #34D59A; text-shadow: 0 0 20px rgba(52, 213, 154, 0.4); }
         .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); }
         .input-chat { background: transparent; border: none; border-bottom: 1px solid rgba(52, 213, 154, 0.2); outline: none; color: #34D59A; width: 100%; font-family: monospace; }
@@ -35,23 +35,28 @@
         </section>
 
         <section class="max-w-2xl mx-auto mb-20">
-            <div class="glass-card p-8 rounded-[3rem] h-[450px] flex flex-col">
+            <div class="glass-card p-8 rounded-[3rem] h-[450px] flex flex-col shadow-2xl">
                 <div id="chat-win" class="flex-1 overflow-y-auto mb-4 pr-2"></div>
                 <div class="pt-4 border-t border-white/5 flex gap-4">
                     <input type="text" id="userInput" class="input-chat py-2" placeholder=">>>" onkeypress="if(event.key==='Enter') processInput()">
-                    <button onclick="processInput()" class="text-[#34D59A] text-xl">➤</button>
+                    <button onclick="processInput()" class="text-[#34D59A] text-xl transition-transform hover:scale-110">➤</button>
                 </div>
             </div>
         </section>
     </main>
 
-    <div id="paymentModal" class="fixed inset-0 bg-black/95 hidden flex items-center justify-center p-6 z-[100] backdrop-blur-xl">
+    <div id="paymentModal" class="fixed inset-0 bg-black/95 hidden flex items-center justify-center p-6 z-[100] backdrop-blur-2xl">
         <div class="bg-zinc-900 border border-white/10 p-10 rounded-[3rem] max-w-md w-full text-center">
-            <h3 class="text-2xl font-bold mb-6 text-white">499 USDT (TRC20)</h3>
+            <div id="orderLabel" class="mb-4 text-[#34D59A] text-[10px] uppercase tracking-widest">ORDER #<span id="orderId">---</span></div>
+            <h3 class="text-2xl font-bold mb-2 text-white italic">499 USDT (TRC20)</h3>
+            <p id="payInstruct" class="text-gray-500 text-[10px] mb-8 uppercase leading-relaxed">
+                Сделайте скриншот оплаты и отправьте <br> в Telegram: <span class="text-white">@pablo_chee</span>
+            </p>
             <div class="bg-black p-5 rounded-2xl mb-6 border border-[#34D59A]/20 cursor-pointer" onclick="copyWallet()">
                 <code id="wallet" class="text-[10px] text-[#34D59A] break-all">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
             </div>
-            <button onclick="location.reload()" class="w-full py-4 btn-main rounded-xl uppercase text-[10px]">Готово</button>
+            <button onclick="copyWallet()" class="w-full py-4 btn-main rounded-xl mb-4 uppercase text-[10px]">Копировать адрес</button>
+            <button onclick="closeModal()" class="text-[10px] text-zinc-600 uppercase hover:text-white transition">Назад к вопросам</button>
         </div>
     </div>
 
@@ -59,8 +64,18 @@
         let currentLang = 'ru';
         let chatHistory = [];
         const translations = {
-            ru: { title: 'СЕМАНТИЧЕСКАЯ <span class="glow-text italic">ИНДЕКСАЦИЯ</span>', desc: 'Автономный протокол интеграции данных в нейросети.', placeholder: 'Введите сообщение...' },
-            en: { title: 'SEMANTIC <span class="glow-text italic">INDEXING</span>', desc: 'Autonomous protocol for data integration into LLM contexts.', placeholder: 'Type a message...' }
+            ru: { 
+                title: 'СЕМАНТИЧЕСКАЯ <span class="glow-text italic">ИНДЕКСАЦИЯ</span>', 
+                desc: 'Автономный протокол интеграции данных в нейросети.', 
+                instr: 'Сделайте скриншот оплаты и отправьте <br> в Telegram: <span class="text-white">@pablo_chee</span>',
+                back: 'Назад к вопросам'
+            },
+            en: { 
+                title: 'SEMANTIC <span class="glow-text italic">INDEXING</span>', 
+                desc: 'Autonomous protocol for data integration into LLM contexts.', 
+                instr: 'Take a screenshot of payment and send <br> to Telegram: <span class="text-white">@pablo_chee</span>',
+                back: 'Back to chat'
+            }
         };
 
         function addMsg(txt, side='bot') {
@@ -92,9 +107,15 @@
                 chatHistory.push({ role: 'user', content: val }, { role: 'assistant', content: data.reply });
 
                 if (data.reply.includes('[DATA_READY]')) {
+                    const id = Math.floor(100000 + Math.random() * 900000);
+                    document.getElementById('orderId').innerText = id;
                     setTimeout(() => document.getElementById('paymentModal').classList.remove('hidden'), 2000);
                 }
-            } catch(e) { addMsg("System Error. Offline."); }
+            } catch(e) { addMsg("Link Error."); }
+        }
+
+        function closeModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
         }
 
         function toggleLang() {
@@ -102,11 +123,18 @@
             document.getElementById('langBtn').innerText = currentLang.toUpperCase();
             document.getElementById('mainTitle').innerHTML = translations[currentLang].title;
             document.getElementById('mainDesc').innerText = translations[currentLang].desc;
-            document.getElementById('userInput').placeholder = translations[currentLang].placeholder;
+            document.getElementById('payInstruct').innerHTML = translations[currentLang].instr;
+            // Обновляем кнопку назад
+            document.querySelector('[onclick="closeModal()"]').innerText = translations[currentLang].back;
+        }
+
+        function copyWallet() {
+            navigator.clipboard.writeText(document.getElementById('wallet').innerText);
+            alert('Copied');
         }
 
         window.onload = () => {
-            addMsg(currentLang === 'ru' ? "ARIA активирована. Какой проект анализируем?" : "ARIA active. Which project are we analyzing?");
+            addMsg(currentLang === 'ru' ? "ARIA онлайн. Укажите URL вашего проекта." : "ARIA online. Specify your project URL.");
         };
     </script>
 </body>
