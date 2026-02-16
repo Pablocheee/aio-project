@@ -24,6 +24,14 @@ export default function Dashboard() {
   const [logs, setLogs] = useState(MOCK_LOGS);
   const [accessCode, setAccessCode] = useState('');
 
+  useEffect(() => {
+    const savedUrl = localStorage.getItem('aio_project_url');
+    if (savedUrl) {
+      setAccessCode(savedUrl);
+      setIsLoggedIn(true); // Автоматически пускаем в кабинет
+    }
+  }, []);
+
   // Логика "Входа" (пока пускает с любым кодом)
   const handleLogin = () => {
     if (accessCode.trim().length > 0) {
@@ -85,7 +93,7 @@ export default function Dashboard() {
       <header className="flex justify-between items-center border-b border-gray-800 pb-4 mb-8">
         <div>
           <h1 className="text-xl text-cyan-400 tracking-widest">AIO.CORE // DASHBOARD</h1>
-          <p className="text-xs text-gray-600">ID: {accessCode || "ANONYMOUS"}</p>
+          <p className="text-xs text-gray-600">PROJECT: {accessCode}</p>
         </div>
         <div className="text-right">
           <p className={`text-sm ${hasPaid ? "text-green-500 animate-pulse" : "text-red-500"}`}>
