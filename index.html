@@ -185,41 +185,39 @@ const translations = {
         }
 
         async function processInput() {
-            const inp = document.getElementById('userInput');
-            const val = inp.value.trim();
-            if(!val) return;
+    const inp = document.getElementById('userInput');
+    const val = inp.value.trim();
+    if(!val) return;
 
-            addMsg(val, 'user');
-            inp.value = '';
+    addMsg(val, 'user');
+    inp.value = '';
 
-            try {
-                const res = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ message: val, history: chatHistory, lang: currentLang })
-                });
-                const data = await res.json();
-                
-                addMsg(data.reply);
-                chatHistory.push({ role: 'user', content: val }, { role: 'assistant', content: data.reply });
+    try {
+        const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ message: val, history: chatHistory, lang: currentLang })
+        });
+        const data = await res.json();
+        
+        addMsg(data.reply);
+        chatHistory.push({ role: 'user', content: val }, { role: 'assistant', content: data.reply });
 
-if (data.reply.includes('[DATA_READY]')) {
-                    const id = Math.floor(100000 + Math.random() * 900000);
-                    document.getElementById('orderId').innerText = id;
+        // ПРОВЕРКА НА ГОТОВНОСТЬ
+        if (data.reply.includes('[DATA_READY]')) {
+            // Ищем URL в истории чата (первое сообщение пользователя)
+            const projectUrl = chatHistory[0].content; 
+            localStorage.setItem('aio_project_url', projectUrl); 
 
-                    // ПЕРЕХОД В ЛИЧНЫЙ КАБИНЕТ
-                    setTimeout(() => {
-                        // Сохраняем URL проекта
-                        localStorage.setItem('aio_project_url', val); 
-                        // Перенаправляем
-                        window.location.href = '/dashboard';
-                    }, 2500);
-                }
-            } catch(e) { 
-                addMsg("Link Error."); 
-                console.error(e);
-            }
-        } // <--- ВОТ ЭТА СКОБКА ЗАКРЫВАЕТ processInput
+            setTimeout(() => {
+                window.location.href = '/dashboard'; // Убедись, что путь совпадает с роутом в Next.js
+            }, 2500);
+        }
+    } catch(e) { 
+        addMsg("Connection Error."); 
+        console.error(e);
+    }
+}
 
         function closeModal() {
             document.getElementById('paymentModal').classList.add('hidden');
