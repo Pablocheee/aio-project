@@ -160,7 +160,7 @@ export default function Dashboard() {
                 To enable AIO synchronization and unlock Neural Authority, complete the transfer.
               </p>
               <div className="bg-black p-3 text-xs text-gray-300 mb-4 border border-gray-700">
-                USDT (TRC20): T...[ТВОЙ КОШЕЛЕК]...X
+                USDT (TRC20): T...[UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY]...X
               </div>
               <button 
                 onClick={handlePayment}
