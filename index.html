@@ -203,13 +203,23 @@ const translations = {
                 addMsg(data.reply);
                 chatHistory.push({ role: 'user', content: val }, { role: 'assistant', content: data.reply });
 
-                if (data.reply.includes('[DATA_READY]')) {
-                    const id = Math.floor(100000 + Math.random() * 900000);
-                    document.getElementById('orderId').innerText = id;
-                    setTimeout(() => document.getElementById('paymentModal').classList.remove('hidden'), 2000);
-                }
-            } catch(e) { addMsg("Link Error."); }
-        }
+if (data.reply.includes('[DATA_READY]')) {
+                    const id = Math.floor(100000 + Math.random() * 900000);
+                    document.getElementById('orderId').innerText = id;
+
+                    // ПЕРЕХОД В ЛИЧНЫЙ КАБИНЕТ
+                    setTimeout(() => {
+                        // Сохраняем URL проекта
+                        localStorage.setItem('aio_project_url', val); 
+                        // Перенаправляем
+                        window.location.href = '/dashboard';
+                    }, 2500);
+                }
+            } catch(e) { 
+                addMsg("Link Error."); 
+                console.error(e);
+            }
+        } // <--- ВОТ ЭТА СКОБКА ЗАКРЫВАЕТ processInput
 
         function closeModal() {
             document.getElementById('paymentModal').classList.add('hidden');
