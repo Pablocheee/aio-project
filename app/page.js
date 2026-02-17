@@ -75,14 +75,18 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const lines = ["Vectorizing node #412...", "RAG Sync: 99.2%", "LLM Context sync...", "Weights adjusted", "Gateway: Ready"];
-    const interval = setInterval(() => {
-      setLiveLogs(prev => {
-        const next = { time: new Date().toLocaleTimeString(), text: lines[Math.floor(Math.random() * lines.length)] };
-        return [...prev, next].slice(-3);
-      });
-    }, 3000);
-    return () => clearInterval(interval);
+    const savedSession = localStorage.getItem('aio_session');
+    const rememberedEmail = localStorage.getItem('aio_email');
+    const rememberedPass = localStorage.getItem('aio_pass'); // Достаем пароль
+    
+    if (savedSession === 'active') setView('dashboard');
+    else setView('chat');
+
+    if (rememberedEmail) { 
+      setUserEmail(rememberedEmail); 
+      setPassword(rememberedPass || ''); // Подставляем пароль
+      setRememberMe(true); 
+    }
   }, []);
 
   useEffect(() => {
@@ -124,8 +128,13 @@ export default function Home() {
     const savedPass = localStorage.getItem(`user_${userEmail}`);
     if ((userEmail === 'admin@aio.core' && password === '772109') || savedPass === password) {
       localStorage.setItem('aio_session', 'active');
-      if (rememberMe) localStorage.setItem('aio_email', userEmail);
-      else localStorage.removeItem('aio_email');
+      if (rememberMe) {
+        localStorage.setItem('aio_email', userEmail);
+        localStorage.setItem('aio_pass', password); // Сохраняем пароль
+      } else {
+        localStorage.removeItem('aio_email');
+        localStorage.removeItem('aio_pass');
+      }
       setView('dashboard'); setAuthError('');
     } else {
       setAuthError('Invalid Credentials');
@@ -134,11 +143,24 @@ export default function Home() {
 
   const processInput = () => {
     if (!inputValue.trim()) return;
-    setChatHistory(prev => [...prev, { role: 'user', content: inputValue }]);
+    const userMsg = inputValue;
+    setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
     setInputValue('');
+
     setTimeout(() => {
-      setChatHistory(prev => [...prev, { role: 'assistant', content: "Анализ завершен. Пакет данных сформирован. [DATA_READY]" }]);
-      setTimeout(() => setView('auth'), 1500);
+      // Проверяем, есть ли в сообщении намек на ссылку или кодовое слово
+      const isTarget = userMsg.toLowerCase().includes('http') || 
+                       userMsg.toLowerCase().includes('www') || 
+                       userMsg.toLowerCase().includes('.');
+
+      if (isTarget) {
+        const botResponse = "Цель обнаружена. Анализ завершен. Пакет данных сформирован. [DATA_READY]";
+        setChatHistory(prev => [...prev, { role: 'assistant', content: botResponse }]);
+        setTimeout(() => setView('auth'), 1500);
+      } else {
+        const botResponse = "Система готова. Пожалуйста, введите URL ресурса или целевой массив данных для индексации.";
+        setChatHistory(prev => [...prev, { role: 'assistant', content: botResponse }]);
+      }
     }, 1000);
   };
 
@@ -273,9 +295,10 @@ export default function Home() {
                   </div>
 
                   <button className="w-full py-6 ton-button text-white font-black rounded-2xl text-[11px] uppercase flex items-center justify-center gap-4 shadow-lg shadow-blue-500/20">
-                    <img src="https://ton.org/download/ton_symbol.svg" className="w-6 h-6 brightness-200" alt="ton" />
-                    {t.payBtn}
-                  </button>
+  {/* Оставляем только текст из перевода, иконка подтянется через gap */}
+  <img src="https://ton.org/download/ton_symbol.svg" className="w-6 h-6 brightness-200" alt="" />
+  {t.payBtn}
+</button>
                   
                   {isSearchingTx && (
                     <div className="p-4 bg-[#34D59A]/10 border border-[#34D59A]/20 rounded-2xl flex items-center justify-center gap-3 animate-pulse">
