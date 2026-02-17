@@ -144,7 +144,10 @@ export default function Home() {
   const processInput = async () => {
   if (!inputValue.trim()) return;
   const userMsg = inputValue;
-  setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
+  
+  // Сохраняем сообщение в историю сразу
+  const newHistory = [...chatHistory, { role: 'user', content: userMsg }];
+  setChatHistory(newHistory);
   setInputValue('');
 
   try {
@@ -152,27 +155,24 @@ export default function Home() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        messages: [
-          { 
-            role: "system", 
-            content: "Ты — ARIA v4.0. Твоя задача: узнать URL сайта и контакты (ТГ/почта). Объясни, что мы индексируем проект в LLM. Когда получишь данные, напиши: [DATA_READY]" 
-          },
-          ...chatHistory.map(m => ({ role: m.role, content: m.content })),
-          { role: "user", content: userMsg }
-        ]
+        message: userMsg,       // Твой бэкенд ждет 'message'
+        history: chatHistory,   // Твой бэкенд ждет 'history'
+        lang: currentLang       // Твой бэкенд ждет 'lang'
       })
     });
 
     const data = await response.json();
-    const botMsg = data.choices[0].message.content; // Убедись, что твой роут возвращает именно такую структуру
+    const botMsg = data.reply; // Твой бэкенд возвращает { reply: "текст" }
 
     setChatHistory(prev => [...prev, { role: 'assistant', content: botMsg }]);
 
+    // Если ИИ выдал кодовое слово — перекидываем на регистрацию
     if (botMsg.includes("[DATA_READY]")) {
-      setTimeout(() => setView('register'), 2000);
+      setTimeout(() => setView('register'), 2500);
     }
   } catch (error) {
-    setChatHistory(prev => [...prev, { role: 'assistant', content: "Ошибка связи с нейромодулем. Пожалуйста, введите URL напрямую." }]);
+    console.error("Fetch error:", error);
+    setChatHistory(prev => [...prev, { role: 'assistant', content: "PROTOCOL_ERROR: CONNECTION_TIMEOUT" }]);
   }
 };
 
