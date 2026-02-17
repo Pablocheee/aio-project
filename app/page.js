@@ -14,8 +14,8 @@ export default function Home() {
   const [isSearchingTx, setIsSearchingTx] = useState(false);
 
   const [liveLogs, setLiveLogs] = useState([
-    { time: new Date().toLocaleTimeString(), text: "System bridge established..." },
-    { time: new Date().toLocaleTimeString(), text: "Neural core: Standby" }
+    { time: new Date().toLocaleTimeString(), text: "Neural bridge established..." },
+    { time: new Date().toLocaleTimeString(), text: "Ready for injection" }
   ]);
 
   const chatEndRef = useRef(null);
@@ -31,7 +31,8 @@ export default function Home() {
       cabinet: 'КАБИНЕТ',
       payTon: 'Tonkeeper',
       status: 'Статус',
-      nodes: 'Узлы'
+      nodes: 'Узлы',
+      capture: 'ЗАХВАТ ОБЛАСТИ GPT'
     },
     en: { 
       title: 'SEMANTIC <span class="glow-text italic">INDEXING</span>', 
@@ -43,14 +44,15 @@ export default function Home() {
       cabinet: 'CABINET',
       payTon: 'Tonkeeper',
       status: 'Status',
-      nodes: 'Nodes'
+      nodes: 'Nodes',
+      capture: 'GPT CONTEXT CAPTURE'
     }
   };
 
   const t = translations[currentLang];
 
   useEffect(() => {
-    const lines = ["Vectorizing node #412...", "RAG Sync: 99.2%", "LLM Context sync...", "Weights adjusted", "Gateway: Ready"];
+    const lines = ["Scanning GPT vectors...", "RAG sync: active", "Context injection: 12%", "Mapping nodes...", "Neural link stable"];
     const interval = setInterval(() => {
       setLiveLogs(prev => {
         const next = { time: new Date().toLocaleTimeString(), text: lines[Math.floor(Math.random() * lines.length)] };
@@ -84,13 +86,40 @@ export default function Home() {
     <div className="min-h-screen text-white bg-[#050505] selection:bg-[#34D59A] selection:text-black overflow-x-hidden">
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap');
-        body { font-family: 'Space Grotesk', sans-serif; background: #050505; }
+        body { font-family: 'Space Grotesk', sans-serif; background: #050505; margin: 0; }
         .glow-text { color: #34D59A; text-shadow: 0 0 15px rgba(52, 213, 154, 0.4); }
-        .glass-card { background: rgba(15, 15, 15, 0.8); border: 1px solid rgba(52, 213, 154, 0.1); backdrop-filter: blur(10px); }
+        .glass-card { background: rgba(15, 15, 15, 0.85); border: 1px solid rgba(52, 213, 154, 0.1); backdrop-filter: blur(12px); }
         .bot-msg { color: #34D59A; font-family: monospace; font-size: 12px; margin-bottom: 12px; border-left: 2px solid #34D59A; padding-left: 10px; }
         .user-msg { color: #fff; font-family: monospace; font-size: 12px; opacity: 0.5; margin-bottom: 12px; text-align: right; border-right: 2px solid rgba(255,255,255,0.1); padding-right: 10px; }
+        
+        /* 3D Visualizer Styles */
+        .neural-grid {
+          background-image: linear-gradient(rgba(52, 213, 154, 0.1) 1px, transparent 1px), 
+                            linear-gradient(90deg, rgba(52, 213, 154, 0.1) 1px, transparent 1px);
+          background-size: 20px 20px;
+          perspective: 1000px;
+          transform: rotateX(60deg);
+          position: absolute;
+          width: 200%;
+          height: 200%;
+          top: -50%;
+          left: -50%;
+          animation: grid-move 20s linear infinite;
+        }
+        @keyframes grid-move {
+          0% { transform: rotateX(60deg) translateY(0); }
+          100% { transform: rotateX(60deg) translateY(20px); }
+        }
+        .capture-point {
+          animation: pulse-point 2s infinite;
+        }
+        @keyframes pulse-point {
+          0%, 100% { transform: scale(1); opacity: 0.5; }
+          50% { transform: scale(2); opacity: 1; }
+        }
+
         input[type='range'] { -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 10px; height: 6px; width: 100%; }
-        input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: #34D59A; border-radius: 50%; cursor: pointer; }
+        input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: #34D59A; border-radius: 50%; cursor: pointer; border: 2px solid #050505; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
       `}</style>
 
@@ -112,36 +141,28 @@ export default function Home() {
       {/* VIEW: CHAT */}
       {view === 'chat' && (
         <main className="pt-24 md:pt-32 pb-10 px-4 flex flex-col items-center min-h-screen">
-          <div className="max-w-3xl w-full flex flex-col h-full">
-            <div className="text-center mb-8 md:mb-12">
-              <h1 className="text-4xl md:text-8xl font-black mb-4 tracking-tighter uppercase leading-tight" dangerouslySetInnerHTML={{ __html: t.title }} />
-              <p className="text-gray-500 text-[10px] md:text-sm tracking-widest uppercase font-light px-4">{t.desc}</p>
+          <div className="max-w-3xl w-full">
+            <div className="text-center mb-8">
+              <h1 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter uppercase leading-tight" dangerouslySetInnerHTML={{ __html: t.title }} />
+              <p className="text-gray-500 text-[10px] md:text-sm tracking-widest uppercase font-light">{t.desc}</p>
             </div>
-
-            {/* CONSOLE */}
-            <div className="w-full mb-4 glass-card p-3 md:p-4 rounded-2xl md:rounded-3xl bg-black/40 border-[#34D59A]/20">
+            <div className="w-full mb-4 glass-card p-3 md:p-4 rounded-2xl bg-black/40 border-[#34D59A]/20">
               <div className="font-mono text-[9px] md:text-[10px] text-[#34D59A]/60 flex flex-col gap-1">
-                {liveLogs.map((log, i) => <div key={i} className="truncate">[{log.time}] {log.text}</div>)}
+                {liveLogs.map((log, i) => <div key={i}>[{log.time}] {log.text}</div>)}
               </div>
             </div>
-
-            {/* CHAT WINDOW */}
-            <div className="glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3.5rem] flex flex-col relative overflow-hidden flex-1 min-h-[400px] max-h-[60vh]">
+            <div className="glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3.5rem] h-[400px] flex flex-col relative overflow-hidden">
               <div className="flex-1 overflow-y-auto mb-4 space-y-2 scrollbar-hide">
-                {chatHistory.length === 0 && <div className="bot-msg">{'>'} ARIA v4.0 READY. URL?</div>}
+                {chatHistory.length === 0 && <div className="bot-msg">{'>'} ARIA v4.2. Waiting for link...</div>}
                 {chatHistory.map((msg, i) => (
                   <div key={i} className={msg.role === 'assistant' ? 'bot-msg' : 'user-msg'}>{msg.content}</div>
                 ))}
                 <div ref={chatEndRef} />
               </div>
               <div className="flex gap-4 items-center border-t border-white/5 pt-4">
-                <input 
-                  className="bg-transparent outline-none text-[#34D59A] flex-1 font-mono text-sm placeholder:text-gray-700 w-full"
-                  placeholder={t.place}
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && processInput()}
-                />
+                <input className="bg-transparent outline-none text-[#34D59A] flex-1 font-mono text-sm placeholder:text-gray-700 w-full"
+                  placeholder={t.place} value={inputValue} onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && processInput()} />
                 <button onClick={processInput} className="text-[#34D59A] text-xl">➤</button>
               </div>
             </div>
@@ -152,14 +173,14 @@ export default function Home() {
       {/* VIEW: AUTH */}
       {view === 'auth' && (
         <main className="min-h-screen flex items-center justify-center p-4">
-          <div className="max-w-md w-full glass-card p-8 md:p-12 rounded-[2.5rem] md:rounded-[4rem] animate-in fade-in zoom-in-95">
-            <h2 className="text-2xl md:text-3xl font-black mb-8 tracking-tighter uppercase italic text-center">Identity</h2>
+          <div className="max-w-md w-full glass-card p-10 rounded-[3rem] animate-in fade-in zoom-in-95">
+            <h2 className="text-2xl font-black mb-8 tracking-tighter uppercase text-center italic">Identity Verification</h2>
             <div className="space-y-4">
               <input type="email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)}
-                className="w-full bg-white rounded-xl md:rounded-2xl px-5 py-3 md:py-4 outline-none font-mono text-sm text-black" placeholder="EMAIL" />
+                className="w-full bg-white rounded-xl px-5 py-3 outline-none font-mono text-sm text-black" placeholder="EMAIL" />
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-white rounded-xl md:rounded-2xl px-5 py-3 md:py-4 outline-none font-mono text-sm text-black" placeholder="PASSWORD" />
-              <button onClick={() => setView('dashboard')} className="w-full py-4 md:py-6 bg-[#34D59A] text-black font-black rounded-xl md:rounded-2xl text-[10px] md:text-[11px] uppercase shadow-xl">
+                className="w-full bg-white rounded-xl px-5 py-3 outline-none font-mono text-sm text-black" placeholder="TOKEN" />
+              <button onClick={() => setView('dashboard')} className="w-full py-5 bg-[#34D59A] text-black font-black rounded-xl text-[10px] uppercase">
                 {t.authBtn}
               </button>
             </div>
@@ -169,77 +190,94 @@ export default function Home() {
 
       {/* VIEW: DASHBOARD */}
       {view === 'dashboard' && (
-        <main className="pt-24 md:pt-32 pb-10 px-4 max-w-[1200px] mx-auto">
-          <div className="flex flex-col lg:flex-row gap-6 md:gap-10">
+        <main className="pt-24 md:pt-32 pb-10 px-4 max-w-[1200px] mx-auto animate-in slide-in-from-bottom-5 duration-700">
+          <div className="flex flex-col gap-6">
             
-            {/* MOBILE HEADER (только для малых экранов) */}
-            <div className="lg:hidden flex justify-between items-end mb-4 px-2">
-                <h2 className="text-3xl font-black tracking-tighter uppercase italic">{t.cabinet}</h2>
-                <div className="text-2xl font-black text-red-500">0.00 <span className="text-[10px] text-white/40">USDT</span></div>
-            </div>
-
-            {/* SIDEBAR (Desktop only) */}
-            <div className="hidden lg:flex flex-col w-64 space-y-4">
-              <div className="glass-card p-6 rounded-[2rem] border-[#34D59A]/30">
-                <div className="text-[10px] text-gray-500 uppercase font-bold mb-2">Network</div>
-                <div className="text-2xl font-black italic">14.2K <span className="text-[10px] text-[#34D59A]">NODES</span></div>
+            {/* TOP BAR */}
+            <div className="flex justify-between items-end bg-white/5 p-6 rounded-[2rem] border border-white/5">
+              <div>
+                <h2 className="text-3xl md:text-5xl font-black tracking-tighter uppercase italic leading-none">{t.cabinet}</h2>
+                <div className="text-[10px] text-[#34D59A] font-mono mt-2 uppercase tracking-widest animate-pulse">Connection: Active</div>
               </div>
-              <div className="p-4 rounded-xl text-[10px] uppercase font-bold bg-[#34D59A] text-black">Terminal</div>
-              <div className="p-4 rounded-xl text-[10px] uppercase font-bold text-gray-500">Billing</div>
+              <div className="text-right">
+                <div className="text-2xl md:text-4xl font-black text-red-500 italic">0.00 <span className="text-xs text-white opacity-20">USDT</span></div>
+              </div>
             </div>
 
-            <div className="flex-1 space-y-6 md:space-y-8">
-              <header className="hidden lg:flex justify-between items-end">
-                <div>
-                  <h2 className="text-5xl font-black tracking-tighter uppercase italic">{t.cabinet}</h2>
-                  <div className="text-[10px] text-gray-500 font-mono mt-1">ID: {orderId}-ALPHA</div>
-                </div>
-                <div className="text-4xl font-black text-red-500">0.00 <span className="text-sm text-white/20">USDT</span></div>
-              </header>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                {/* SLIDER */}
-                <div className="glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3.5rem] space-y-6 md:space-y-8">
-                  <div className="flex justify-between items-center">
-                    <h4 className="text-[10px] md:text-[11px] uppercase font-bold text-gray-400 tracking-widest">Power Scale</h4>
-                    <span className="text-[#34D59A] font-mono text-sm md:text-lg font-bold">${price}</span>
-                  </div>
-                  <input type="range" min="100" max="499" value={price} onChange={(e) => setPrice(e.target.value)} />
-                  <div className="grid grid-cols-2 gap-3 md:gap-4">
-                    <div className="p-3 md:p-4 rounded-xl bg-white/5 border border-white/5 text-center">
-                      <div className="text-[8px] md:text-[9px] text-gray-500 uppercase mb-1">{t.nodes}</div>
-                      <div className="text-lg md:text-xl font-bold italic">{Math.floor(price * 12)}</div>
-                    </div>
-                    <div className="p-3 md:p-4 rounded-xl bg-white/5 border border-white/5 text-center">
-                      <div className="text-[8px] md:text-[9px] text-gray-500 uppercase mb-1">Time</div>
-                      <div className="text-lg md:text-xl font-bold italic">365D</div>
-                    </div>
-                  </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              
+              {/* 3D VISUALIZATION BLOCK (ЗАХВАТ ОБЛАСТИ) */}
+              <div className="lg:col-span-2 glass-card rounded-[2.5rem] overflow-hidden relative h-[300px] md:h-[450px]">
+                <div className="absolute top-6 left-6 z-10">
+                  <h4 className="text-[11px] font-bold text-white tracking-[0.3em] uppercase mb-1">{t.capture}</h4>
+                  <div className="text-[9px] text-[#34D59A] font-mono">RADIUS: {(price * 2.4).toFixed(1)}m / DEPTH: {price}lv</div>
                 </div>
 
-                {/* PAYMENT */}
-                <div className="glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3.5rem] border-[#34D59A]/30 flex flex-col justify-center">
+                {/* VISUAL ENGINE */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                   <div className="neural-grid"></div>
+                   <svg width="100%" height="100%" className="absolute inset-0 z-0 opacity-40">
+                      <circle cx="50%" cy="50%" r={price / 3} fill="none" stroke="#34D59A" strokeWidth="1" strokeDasharray="5,5">
+                        <animate attributeName="r" from="0" to={price} dur="3s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" from="1" to="0" dur="3s" repeatCount="indefinite" />
+                      </circle>
+                      {[...Array(8)].map((_, i) => (
+                        <circle key={i} className="capture-point" cx={`${30 + Math.random() * 40}%`} cy={`${30 + Math.random() * 40}%`} r="3" fill="#34D59A" />
+                      ))}
+                   </svg>
+                   <div className="z-10 text-center">
+                     <div className="w-24 h-24 md:w-40 md:h-40 rounded-full border border-[#34D59A]/20 flex items-center justify-center animate-spin-slow">
+                        <div className="w-16 h-16 md:w-32 md:h-32 rounded-full border-t-2 border-[#34D59A] shadow-[0_0_30px_rgba(52,213,154,0.3)]"></div>
+                     </div>
+                   </div>
+                </div>
+                
+                <div className="absolute bottom-6 right-6 z-10 bg-black/60 p-3 rounded-xl border border-white/5 backdrop-blur-md">
+                   <div className="text-[8px] text-gray-500 uppercase mb-1 font-bold">Scanning context...</div>
+                   <div className="w-32 h-1 bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full bg-[#34D59A] animate-progress" style={{ width: '65%' }}></div>
+                   </div>
+                </div>
+              </div>
+
+              {/* CONTROLS & PAYMENT */}
+              <div className="space-y-6">
+                <div className="glass-card p-8 rounded-[2.5rem] border-[#34D59A]/20">
+                  <div className="flex justify-between mb-6">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Core Power</span>
+                    <span className="text-[#34D59A] font-mono font-bold">${price}</span>
+                  </div>
+                  <input type="range" min="100" max="499" value={price} onChange={(e) => setPrice(e.target.value)} className="mb-8" />
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                      <div className="text-[8px] text-gray-500 uppercase mb-1">{t.nodes}</div>
+                      <div className="text-xl font-bold italic">{Math.floor(price * 8.5)}</div>
+                    </div>
+                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                      <div className="text-[8px] text-gray-500 uppercase mb-1">Impact</div>
+                      <div className="text-xl font-bold italic">{(price / 5).toFixed(1)}%</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="glass-card p-8 rounded-[2.5rem] border-blue-500/20 bg-blue-500/[0.02]">
                   <div className="text-center mb-6">
-                    <div className="text-[10px] text-gray-500 uppercase font-bold mb-1 italic">Total Due</div>
-                    <div className="text-4xl md:text-5xl font-black italic">{price} <span className="text-lg opacity-20 text-white">USDT</span></div>
+                    <div className="text-[9px] text-gray-500 uppercase font-bold tracking-[0.2em] mb-2">Ready to Activate</div>
+                    <div className="text-4xl font-black italic">{price} <span className="text-sm opacity-20">USDT</span></div>
                   </div>
-                  <button onClick={handleTonkeeperPay} className="w-full py-4 md:py-6 bg-blue-500 text-white font-black rounded-xl md:rounded-2xl text-[10px] md:text-[11px] uppercase flex items-center justify-center gap-3">
-                    <img src="https://ton.org/download/ton_symbol.svg" className="w-4 h-4 md:w-5 md:h-5 brightness-200" alt="ton" />
+                  <button onClick={handleTonkeeperPay} className="w-full py-5 bg-blue-500 text-white font-black rounded-2xl text-[10px] uppercase flex items-center justify-center gap-3 shadow-lg shadow-blue-500/20 hover:scale-[1.02] transition-transform">
+                    <img src="https://ton.org/download/ton_symbol.svg" className="w-5 h-5 brightness-200" alt="ton" />
                     {t.payTon}
                   </button>
-                  {isSearchingTx && (
-                    <div className="mt-4 p-3 bg-black/50 border border-[#34D59A]/20 rounded-xl flex items-center gap-3 animate-pulse">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#34D59A]"></div>
-                      <div className="text-[8px] md:text-[9px] uppercase text-[#34D59A] font-bold tracking-widest leading-none">Scanning Network...</div>
-                    </div>
-                  )}
                 </div>
               </div>
 
-              {/* DASHBOARD LOGS */}
-              <div className="glass-card p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] h-32 bg-black/40 font-mono text-[9px] text-[#34D59A]/40 overflow-hidden">
-                  {liveLogs.map((log, i) => <div key={i} className="truncate">[{log.time}] {log.text}</div>)}
-              </div>
+            </div>
+
+            {/* SYSTEM LOGS */}
+            <div className="glass-card p-6 rounded-[2rem] bg-black/40 font-mono text-[9px] text-[#34D59A]/40 overflow-hidden flex flex-col gap-1">
+                {liveLogs.map((log, i) => <div key={i} className="truncate">[{log.time}] {log.text} — NODE: ACTIVE — CAPTURE: {price}%</div>)}
             </div>
           </div>
         </main>
