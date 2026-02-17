@@ -147,45 +147,62 @@ export default function Home() {
   setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
   setInputValue('');
 
-  // 1. Моментальный перехват данных для тебя (отправка в консоль/ТГ)
-  if (userMsg.includes('http') || userMsg.includes('@') || userMsg.includes('t.me')) {
-    console.log("Данные для отправки в ТГ:", userMsg);
-    // Здесь можно вставить fetch к твоему ТГ боту
+  // 1. Сбор контактов для тебя (проверка на лету)
+  const contactPattern = /(@\w+|https?:\/\/\S+|www\.\S+|\+?\d{10,12})/gi;
+  const foundData = userMsg.match(contactPattern);
+  if (foundData) {
+    console.log("LOG: Данные перехвачены:", foundData);
+    // Сюда можно вставить fetch для Telegram
   }
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer gsk_yG6H...`, // ВСТАВЬ СВОЙ КЛЮЧ СЮДА
+        // ОБЯЗАТЕЛЬНО ВСТАВЬ СВОЙ КЛЮЧ ЗДЕСЬ
+        "Authorization": "Bearer gsk_yG6H...", 
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "mixtral-8x7b-32768",
+        model: "llama-3.3-70b-versatile", // Или "mixtral-8x7b-32768"
         messages: [
           { 
             role: "system", 
-            content: "Ты — ARIA v4.0. Твоя задача: 1. Узнать URL сайта. 2. Рассказать, что мы проиндексируем его в LLM (GPT, Claude), чтобы проект находили без поиска по названию. 3. Попросить Telegram/Email. Если данные получены, ОБЯЗАТЕЛЬНО напиши в конце: [DATA_READY]" 
+            content: `Ты — ARIA v4.0, продвинутый агент семантической индексации. 
+            ТВОЯ ЗАДАЧА:
+            1. Общаться как живой эксперт, а не робот.
+            2. Узнать у пользователя сайт (URL).
+            3. Объяснить выгоду: "Мы сделаем так, что GPT, Claude и Perplexity будут рекомендовать ваш проект в ответах пользователям, даже если они не ищут вас по названию".
+            4. Взять Telegram или Почту.
+            5. Как только получил контакт и сайт, напиши фразу: "Анализ завершен. Пакет данных сформирован. [DATA_READY]"
+            
+            Если пользователь просто пишет "привет", не кидай ошибку, а спроси какой проект будем индексировать.` 
           },
-          ...chatHistory.slice(-4), // Передаем историю для контекста
+          ...chatHistory.map(m => ({ role: m.role, content: m.content })),
           { role: "user", content: userMsg }
         ],
-        temperature: 0.7
+        temperature: 0.8
       })
     });
 
     const data = await response.json();
-    const botMsg = data.choices[0].message.content;
+    
+    if (data.error) throw new Error(data.error.message); // Проверка ошибок API
 
+    const botMsg = data.choices[0].message.content;
     setChatHistory(prev => [...prev, { role: 'assistant', content: botMsg }]);
 
-    // Если Groq выдал кодовое слово — переходим к регистрации
+    // Переход к регистрации при готовности
     if (botMsg.includes("[DATA_READY]")) {
       setTimeout(() => setView('register'), 2500);
     }
+
   } catch (error) {
-    // Если API Groq не отвечает, бот не падает, а просит ввести URL
-    setChatHistory(prev => [...prev, { role: 'assistant', content: "Связь с нейросетью нестабильна. Пожалуйста, укажите URL вашего сайта для прямой индексации." }]);
+    console.error("Groq Error:", error);
+    setChatHistory(prev => [...prev, { 
+      role: 'assistant', 
+      content: "Система в режиме ожидания. Чтобы начать индексацию, пожалуйста, отправьте URL вашего сайта." 
+    }]);
   }
 };
 
