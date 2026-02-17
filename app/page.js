@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 export default function Home() {
+  const [balance, setBalance] = useState(0); 
   const [view, setView] = useState('loading');
   const [currentLang, setCurrentLang] = useState('ru');
   const [chatHistory, setChatHistory] = useState([]);
@@ -15,13 +16,34 @@ export default function Home() {
   const [isSearchingTx, setIsSearchingTx] = useState(false);
   const [authError, setAuthError] = useState('');
 
-  const canvasRef = useRef(null);
-  const chatEndRef = useRef(null);
+  const canvasRef = useRef(null); 
+  const chatEndRef = useRef(null); 
 
-  const [liveLogs, setLiveLogs] = useState([
-    { time: new Date().toLocaleTimeString(), text: "System bridge established..." },
-    { time: new Date().toLocaleTimeString(), text: "Neural core: Standby" }
-  ]);
+  // 1. Состояние логов (создаем один раз)
+  const [liveLogs, setLiveLogs] = useState([ 
+    { time: new Date().toLocaleTimeString(), text: "System bridge established..." }, 
+    { time: new Date().toLocaleTimeString(), text: "Neural core: Standby" } 
+  ]); 
+
+  // 2. Функция проверки транзакции
+  const checkTransaction = () => { 
+    if (isSearchingTx) return; 
+     
+    setIsSearchingTx(true); 
+
+    setTimeout(() => { 
+      setBalance(prev => prev + parseFloat(price)); 
+      setIsSearchingTx(false); 
+       
+      setLiveLogs(prev => [ 
+        { time: new Date().toLocaleTimeString(), text: `TX_CONFIRMED: +${price} USDT` }, 
+        ...prev 
+      ]); 
+    }, 6000); 
+  };
+
+  // ТУТ СРАЗУ ДОЛЖНА ИДТИ СЛЕДУЮЩАЯ ТВОЯ ФУНКЦИЯ (например, handleAuth)
+  // НИКАКИХ ПОВТОРОВ const [liveLogs...] БОЛЬШЕ БЫТЬ НЕ ДОЛЖНО
 
   const translations = {
     ru: {
@@ -282,9 +304,13 @@ export default function Home() {
                 <div className="text-[10px] text-[#34D59A] font-mono mt-3 uppercase tracking-widest">Protocol: AIO-CORE-ALPHA-{orderId}</div>
               </div>
               <div className="flex flex-col items-end">
-                  <div className="text-4xl md:text-6xl font-black text-red-500 leading-none">0.00 <span className="text-sm text-white/20">USDT</span></div>
-                  <div className="text-[9px] text-gray-500 uppercase mt-3 font-bold px-3 py-1 border border-white/10 rounded-full">BALANCE EMPTY</div>
-              </div>
+    <div className={`text-4xl md:text-6xl font-black leading-none ${balance > 0 ? 'text-[#34D59A]' : 'text-red-500'}`}>
+        {balance.toFixed(2)} <span className="text-sm text-white/20">USDT</span>
+    </div>
+    <div className={`text-[9px] uppercase mt-3 font-bold px-3 py-1 border rounded-full ${balance > 0 ? 'border-[#34D59A] text-[#34D59A]' : 'border-white/10 text-gray-500'}`}>
+        {balance > 0 ? 'NODES ACTIVE' : 'BALANCE EMPTY'}
+    </div>
+</div>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -308,8 +334,10 @@ export default function Home() {
                       </div>
                   </div>
 
-                  <button className="w-full py-6 ton-button text-white font-black rounded-2xl text-[11px] uppercase flex items-center justify-center gap-4 shadow-lg shadow-blue-500/20">
-  {/* Оставляем только текст из перевода, иконка подтянется через gap */}
+                  <button 
+  onClick={checkTransaction}
+  className="w-full py-6 ton-button text-white font-black rounded-2xl text-[11px] uppercase flex items-center justify-center gap-4 shadow-lg shadow-blue-500/20 active:scale-95 transition-transform"
+>
   <img src="https://ton.org/download/ton_symbol.svg" className="w-6 h-6 brightness-200" alt="" />
   {t.payBtn}
 </button>
