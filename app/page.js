@@ -147,27 +147,30 @@ export default function Home() {
   setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
   setInputValue('');
 
-  // 1. Проверка на наличие ссылки/контактов для отправки тебе в TG
+  // 1. Моментальный перехват данных для тебя (отправка в консоль/ТГ)
   if (userMsg.includes('http') || userMsg.includes('@') || userMsg.includes('t.me')) {
-     // Здесь вызывается твоя функция отправки в Telegram (как в предыдущем шаге)
-     console.log("Данные перехвачены для TG:", userMsg);
+    console.log("Данные для отправки в ТГ:", userMsg);
+    // Здесь можно вставить fetch к твоему ТГ боту
   }
 
   try {
-    // 2. Запрос к Groq AI
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.NEXT_PUBLIC_GROQ_API_KEY}`, // Твой ключ
+        "Authorization": `Bearer gsk_yG6H...`, // ВСТАВЬ СВОЙ КЛЮЧ СЮДА
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "mixtral-8x7b-32768", // Или твоя модель
+        model: "mixtral-8x7b-32768",
         messages: [
-          { role: "system", content: "Ты — ARIA v4.0, ИИ для семантической индексации. Твоя цель — убедить пользователя оставить сайт для анализа. Если пользователь прислал ссылку, скажи, что анализ запущен и пакет [DATA_READY]. Короткие ответы." },
-          ...chatHistory,
+          { 
+            role: "system", 
+            content: "Ты — ARIA v4.0. Твоя задача: 1. Узнать URL сайта. 2. Рассказать, что мы проиндексируем его в LLM (GPT, Claude), чтобы проект находили без поиска по названию. 3. Попросить Telegram/Email. Если данные получены, ОБЯЗАТЕЛЬНО напиши в конце: [DATA_READY]" 
+          },
+          ...chatHistory.slice(-4), // Передаем историю для контекста
           { role: "user", content: userMsg }
-        ]
+        ],
+        temperature: 0.7
       })
     });
 
@@ -176,15 +179,13 @@ export default function Home() {
 
     setChatHistory(prev => [...prev, { role: 'assistant', content: botMsg }]);
 
-    // 3. Если ИИ подтвердил готовность данных, перекидываем на регистрацию
-    if (botMsg.includes("DATA_READY")) {
-      setTimeout(() => setView('register'), 2000);
+    // Если Groq выдал кодовое слово — переходим к регистрации
+    if (botMsg.includes("[DATA_READY]")) {
+      setTimeout(() => setView('register'), 2500);
     }
-
   } catch (error) {
-    // Резервный ответ если API упал
-    setChatHistory(prev => [...prev, { role: 'assistant', content: "Ошибка нейросети. Пакет данных сформирован в фоновом режиме. [DATA_READY]" }]);
-    setTimeout(() => setView('auth'), 1500);
+    // Если API Groq не отвечает, бот не падает, а просит ввести URL
+    setChatHistory(prev => [...prev, { role: 'assistant', content: "Связь с нейросетью нестабильна. Пожалуйста, укажите URL вашего сайта для прямой индексации." }]);
   }
 };
 
