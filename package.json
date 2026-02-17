@@ -1,5 +1,5 @@
 {
-  "name": "aio-project",
+  "name": "aio-core",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,6 +11,11 @@
   "dependencies": {
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.3"
+    "next": "14.2.3",
+    "lucide-react": "^0.378.0"
+  },
+  "devDependencies": {
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1"
   }
 }
