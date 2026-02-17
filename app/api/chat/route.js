@@ -1,26 +1,22 @@
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+import { NextResponse } from 'next/server';
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
-
+export async function POST(req) {
   try {
-    const { message, history, lang } = req.body;
+    const { message, history, lang } = await req.json();
 
-    const systemPrompt = `Ты — ARIA, элитный ИИ-менеджер AIO.CORE.
+    const systemPrompt = `Ты — ARIA, элитный ИИ-менеджер AIO.CORE. 
     ТВОЙ АЛГОРИТМ:
     1. Спроси URL проекта.
-    2. Когда получишь URL, кратко опиши, как семантическая индексация усилит именно этот проект (сделай акцент на доминировании в ответах ИИ).
-    3. Запроси Telegram и Email для связи.
-    4. Как только получил контакты, скажи, что сформировал ордер и готов к активации протокола. В конце этого сообщения ОБЯЗАТЕЛЬНО добавь: [DATA_READY].
+    2. Когда получишь URL, кратко объясни, как семантическая индексация даст доминирование в ответах ИИ для этого нишевого проекта.
+    3. Запроси Telegram и Email.
+    4. Получив контакты, скажи, что ордер сформирован. В конце сообщения ОБЯЗАТЕЛЬНО добавь: [DATA_READY].
 
-    ПРАВИЛА ОБЩЕНИЯ:
-    - Пиши максимально кратко (1-2 емких предложения). 
-    - Стиль: холодный киберпанк, технологическое превосходство.
-    - Отвечай на вопросы о гарантиях (результат в выдаче ИИ) и выгодах (органика без рекламы), но не расписывай обзацы.
+    ПРАВИЛА:
+    - Пиши МАКСИМАЛЬНО КРАТКО (1-2 емких предложения). 
+    - Стиль: холодный киберпанк. Никакой воды.
     - Язык: ${lang === 'ru' ? 'русский' : 'английский'}.`;
 
+    // 1. Запрос к Groq
     const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -31,27 +27,35 @@ export default async function handler(req, res) {
         model: "llama-3.3-70b-versatile",
         messages: [
           { role: "system", content: systemPrompt },
-          ...history,
+          ...history.map(m => ({ role: m.role, content: m.content })),
           { role: "user", content: message }
         ],
-        temperature: 0.4
+        temperature: 0.3
       })
     });
 
     const data = await groqRes.json();
     const reply = data.choices[0].message.content;
 
+    // 2. Уведомление в Telegram, если заказ готов
     if (reply.includes('[DATA_READY]')) {
-      const report = `💎 NEW LEAD INFO\nMessage: ${message}\nHistory: ${JSON.stringify(history.slice(-2))}`;
-      await fetch(`https://api.telegram.org/bot${process.env.TG_TOKEN}/sendMessage`, {
+      const report = `💎 NEW LEAD\nMsg: ${message}\nLang: ${lang}`;
+      
+      // Отправляем в ТГ фоном (не ждем ответа, чтобы не тормозить чат)
+      fetch(`https://api.telegram.org/bot${process.env.TG_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: process.env.TG_CHAT_ID, text: report })
-      });
+        body: JSON.stringify({ 
+          chat_id: process.env.TG_CHAT_ID, 
+          text: report 
+        })
+      }).catch(err => console.error("TG Error:", err));
     }
 
-    return res.status(200).json({ reply });
+    return NextResponse.json({ reply });
+
   } catch (error) {
-    return res.status(500).json({ reply: "Connection timeout." });
+    console.error("API ERROR:", error);
+    return NextResponse.json({ reply: "PROTOCOL_ERROR: CONNECTION_TIMEOUT" }, { status: 500 });
   }
 }
