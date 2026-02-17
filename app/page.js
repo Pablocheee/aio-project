@@ -174,102 +174,115 @@ export default function Home() {
           /* DASHBOARD VIEW */
           ) : (
           /* REAL DASHBOARD VIEW */
-          <section className="max-w-6xl mx-auto animate-in zoom-in-95 duration-500">
-            {/* ВЕРХНЯЯ ПАНЕЛЬ СТАТУСОВ */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="glass-card p-4 rounded-xl border-l-2 border-l-[#34D59A]">
-                <div className="text-[8px] uppercase text-gray-500 tracking-widest">Global Status</div>
-                <div className="text-xs font-bold text-[#34D59A]">ACTIVE_NODE</div>
-              </div>
-              <div className="glass-card p-4 rounded-xl">
-                <div className="text-[8px] uppercase text-gray-500 tracking-widest">Semantic Coverage</div>
-                <div className="text-xs font-bold">0.00%</div>
-              </div>
-              <div className="glass-card p-4 rounded-xl border-l-2 border-l-orange-500">
-                <div className="text-[8px] uppercase text-gray-500 tracking-widest">Account Tier</div>
-                <div className="text-xs font-bold text-orange-500">UNPAID</div>
-              </div>
-              <div className="glass-card p-4 rounded-xl text-red-500 animate-pulse">
-                <div className="text-[8px] uppercase text-gray-500 tracking-widest">Indexing</div>
-                <div className="text-xs font-bold">HALTED</div>
+          ) : (
+          /* КИБЕРПАНК ПАНЕЛЬ УПРАВЛЕНИЯ */
+          <section className="fixed inset-0 bg-[#020202] z-50 flex animate-in fade-in duration-500">
+            {/* SIDEBAR */}
+            <div className="w-64 border-r border-white/5 bg-black/50 backdrop-blur-xl flex flex-col p-6">
+              <div className="text-xl font-bold tracking-tighter mb-12 italic">AIO<span className="glow-text">.CORE</span></div>
+              
+              <nav className="flex-1 space-y-2">
+                <div className="text-[9px] uppercase text-gray-600 mb-4 tracking-[0.2em]">Main Menu</div>
+                {['Overview', 'Neural Nodes', 'Semantic Map', 'API Access'].map((item, i) => (
+                  <div key={i} className={`text-[10px] uppercase p-3 rounded-lg border transition-all cursor-pointer ${i === 0 ? 'border-[#34D59A]/50 text-[#34D59A] bg-[#34D59A]/5' : 'border-transparent text-gray-500 hover:text-white hover:bg-white/5'}`}>
+                    {item}
+                  </div>
+                ))}
+              </nav>
+
+              <div className="pt-6 border-t border-white/5">
+                <div className="text-[9px] uppercase text-orange-500 mb-2 font-bold italic">Billing Action Required</div>
+                <div className="text-[10px] text-gray-500 leading-tight">Protocol: Halted<br/>Reason: Unpaid</div>
               </div>
             </div>
 
-            <div className="grid md:grid-cols-12 gap-6">
-              {/* ЛЕВАЯ КОЛОНКА: УПРАВЛЕНИЕ */}
-              <div className="md:col-span-8 space-y-6">
-                <div className="glass-card p-8 rounded-[2rem] min-h-[300px] relative overflow-hidden">
-                  <div className="flex justify-between items-start mb-8">
+            {/* MAIN CONTENT AREA */}
+            <div className="flex-1 flex flex-col overflow-y-auto">
+              <header className="h-16 border-b border-white/5 flex items-center justify-between px-8 bg-black/20">
+                <div className="flex items-center gap-4">
+                  <span className="status-pulse"></span>
+                  <span className="text-[9px] uppercase tracking-widest text-gray-400">Project Engine: <span className="text-white">Active_Standby</span></span>
+                </div>
+                <div className="flex items-center gap-6">
+                  <div className="text-[9px] uppercase text-gray-500 italic">User_ID: {orderId}</div>
+                  <button onClick={() => setView('chat')} className="text-[9px] uppercase border border-white/10 px-3 py-1 rounded hover:bg-white/5">Exit Terminal</button>
+                </div>
+              </header>
+
+              <main className="p-8">
+                <div className="max-w-5xl mx-auto">
+                  <div className="flex justify-between items-end mb-10">
                     <div>
-                      <h3 className="text-2xl font-bold tracking-tighter uppercase italic">Project: Semantic_Protocol_v4</h3>
-                      <p className="text-[10px] text-gray-500 font-mono">Target UID: {orderId}-ALPHA</p>
+                      <h2 className="text-3xl font-bold tracking-tighter uppercase italic">Control Panel</h2>
+                      <p className="text-xs text-gray-500 italic">Manage your project's semantic indexing status</p>
                     </div>
-                    <div className="bg-white/5 px-3 py-1 rounded text-[9px] font-mono">v.3.3.0</div>
-                  </div>
-
-                  {/* ИМИТАЦИЯ ПРОЦЕССА */}
-                  <div className="space-y-6">
-                    <div className="p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-[10px] uppercase font-bold text-red-500">Требуется активация протокола</span>
-                        <span className="text-[9px] font-mono opacity-50">Error_Code: 0xPayment</span>
-                      </div>
-                      <div className="w-full bg-white/5 h-1 rounded-full overflow-hidden">
-                        <div className="bg-red-500 h-full w-[2%]"></div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 bg-black/40 rounded-xl border border-white/5">
-                        <div className="text-[8px] text-gray-500 uppercase mb-2">Neural Link</div>
-                        <div className="h-12 flex items-center justify-center border border-dashed border-white/10 rounded">
-                           <span className="text-[9px] opacity-30">Waiting for signal...</span>
-                        </div>
-                      </div>
-                      <div className="p-4 bg-black/40 rounded-xl border border-white/5">
-                        <div className="text-[8px] text-gray-500 uppercase mb-2">Semantic Map</div>
-                        <div className="h-12 flex items-center justify-center border border-dashed border-white/10 rounded">
-                           <span className="text-[9px] opacity-30">Disconnected</span>
-                        </div>
-                      </div>
+                    <div className="text-right">
+                      <div className="text-[10px] uppercase text-gray-500 mb-1 tracking-widest font-bold">Account Balance</div>
+                      <div className="text-2xl font-bold text-red-500">0.00 USDT</div>
                     </div>
                   </div>
-                </div>
-              </div>
 
-              {/* ПРАВАЯ КОЛОНКА: БЫСТРЫЕ ДЕЙСТВИЯ / ОПЛАТА */}
-              <div className="md:col-span-4 space-y-6">
-                <div className="glass-card p-6 rounded-[2rem] border-orange-500/30">
-                   <div className="text-[10px] font-bold text-orange-500 uppercase mb-4 tracking-tighter text-center">Billing Terminal</div>
-                   <div className="space-y-4">
-                      <div className="flex justify-between text-[10px] border-b border-white/5 pb-2">
-                        <span className="opacity-40 uppercase">Invoice:</span>
-                        <span className="font-mono">#INV-{orderId}</span>
-                      </div>
-                      <div className="flex justify-between text-xs font-bold py-2">
-                        <span className="opacity-40 uppercase">Total:</span>
-                        <span className="text-[#34D59A]">499 USDT</span>
-                      </div>
-                      
-                      <div className="bg-black/80 p-3 rounded-lg border border-[#34D59A]/20">
-                        <div className="text-[7px] text-gray-500 uppercase mb-1 text-center font-bold">TRC20 Address</div>
-                        <div className="text-[9px] text-[#34D59A] break-all font-mono text-center mb-2 select-all">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</div>
-                        <button onClick={copyWallet} className="w-full py-2 bg-white/5 hover:bg-[#34D59A] hover:text-black transition-all rounded text-[8px] uppercase font-bold">
-                          Copy Hash
-                        </button>
+                  <div className="grid grid-cols-12 gap-6">
+                    {/* ЦЕНТРАЛЬНЫЙ ВИДЖЕТ */}
+                    <div className="col-span-12 lg:col-span-8 space-y-6">
+                      <div className="glass-card p-1 rounded-3xl overflow-hidden">
+                        <div className="bg-black/40 p-8 rounded-[1.4rem]">
+                           <div className="flex justify-between items-center mb-8">
+                              <h4 className="text-[11px] uppercase font-bold tracking-widest">Indexing Progress</h4>
+                              <span className="text-[9px] font-mono text-red-500">BLOCK_ERROR: Awaiting_Funding</span>
+                           </div>
+                           <div className="relative h-24 bg-white/5 rounded-xl border border-dashed border-white/10 flex items-center justify-center">
+                              <div className="text-[10px] text-gray-600 uppercase italic">Nodes offline - Initiate payment to start vectorize</div>
+                           </div>
+                        </div>
                       </div>
 
-                      <button className="w-full py-4 bg-orange-500 text-black font-black rounded-xl text-[10px] uppercase shadow-lg shadow-orange-500/20 hover:scale-[1.02] active:scale-95 transition-all">
-                        Verify Transaction
-                      </button>
-                   </div>
-                </div>
+                      <div className="grid grid-cols-2 gap-6">
+                        <div className="glass-card p-6 rounded-2xl border-l-4 border-l-blue-500/50">
+                           <div className="text-[9px] uppercase text-gray-500 mb-2 tracking-widest">Neural Load</div>
+                           <div className="text-xl font-bold">0%</div>
+                        </div>
+                        <div className="glass-card p-6 rounded-2xl border-l-4 border-l-purple-500/50">
+                           <div className="text-[9px] uppercase text-gray-500 mb-2 tracking-widest">Global Reach</div>
+                           <div className="text-xl font-bold italic">INACTIVE</div>
+                        </div>
+                      </div>
+                    </div>
 
-                <div className="glass-card p-4 rounded-2xl bg-blue-500/5 border-blue-500/20">
-                   <div className="text-[8px] text-blue-400 font-bold uppercase mb-1">Support Node</div>
-                   <p className="text-[9px] opacity-60">Нужна помощь в настройке? Обратитесь к куратору: @pablo_chee</p>
+                    {/* ПРАВАЯ ПАНЕЛЬ ОПЛАТЫ */}
+                    <div className="col-span-12 lg:col-span-4">
+                      <div className="glass-card p-8 rounded-[2.5rem] bg-[#34D59A]/[0.02] border-[#34D59A]/20 sticky top-8">
+                        <div className="text-[10px] font-bold text-[#34D59A] uppercase mb-8 tracking-[0.2em] text-center">Fast_Activation</div>
+                        <div className="space-y-6">
+                          <div>
+                            <div className="text-[8px] uppercase text-gray-500 mb-1">Send Exactly:</div>
+                            <div className="text-3xl font-black italic">499 <span className="text-sm font-normal not-italic opacity-40">USDT</span></div>
+                          </div>
+                          
+                          <div className="p-4 bg-black rounded-xl border border-white/5 relative group cursor-pointer" onClick={copyWallet}>
+                             <div className="text-[7px] text-gray-500 uppercase mb-2">Target Address (TRC20)</div>
+                             <code className="text-[10px] text-[#34D59A] break-all block font-mono leading-relaxed">UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY</code>
+                             <div className="absolute inset-0 bg-[#34D59A]/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-[8px] font-bold uppercase">Click to Copy Hash</div>
+                          </div>
+
+                          <div className="space-y-2">
+                             <button className="w-full py-4 bg-[#34D59A] text-black font-black rounded-xl text-[10px] uppercase shadow-[0_0_30px_rgba(52,213,154,0.1)] hover:brightness-110 active:scale-95 transition-all">
+                                Verify Payment
+                             </button>
+                             <button className="w-full py-3 bg-white/5 text-white/40 text-[9px] uppercase rounded-xl hover:text-white transition-colors">
+                                Download Invoice (PDF)
+                             </button>
+                          </div>
+
+                          <div className="pt-4 border-t border-white/5">
+                             <p className="text-[8px] text-gray-600 text-center leading-relaxed">System monitoring TRC20 network 24/7. Activation starts after 1 network confirmation.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </main>
             </div>
           </section>
         )}
