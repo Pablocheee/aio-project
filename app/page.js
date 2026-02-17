@@ -69,9 +69,16 @@ export default function Home() {
   useEffect(() => {
     const savedSession = localStorage.getItem('aio_session');
     const rememberedEmail = localStorage.getItem('aio_email');
+    const rememberedPass = localStorage.getItem('aio_pass');
+    
     if (savedSession === 'active') setView('dashboard');
     else setView('chat');
-    if (rememberedEmail) { setUserEmail(rememberedEmail); setRememberMe(true); }
+    
+    if (rememberedEmail) { 
+      setUserEmail(rememberedEmail); 
+      setPassword(rememberedPass || '');
+      setRememberMe(true); 
+    }
   }, []);
 
   useEffect(() => {
@@ -114,9 +121,9 @@ export default function Home() {
   }, [view, price]);
 
   const handleRegister = () => {
-    if (!userEmail || !password) return setAuthError('Fill all fields');
+    if (!userEmail || !password) return setAuthError('Заполните все поля');
     localStorage.setItem(`user_${userEmail}`, password);
-    setAuthError('Account created! Please login.');
+    setAuthError('Аккаунт создан! Теперь войдите.');
     setTimeout(() => { setAuthError(''); setView('auth'); }, 2000);
   };
 
@@ -124,21 +131,37 @@ export default function Home() {
     const savedPass = localStorage.getItem(`user_${userEmail}`);
     if ((userEmail === 'admin@aio.core' && password === '772109') || savedPass === password) {
       localStorage.setItem('aio_session', 'active');
-      if (rememberMe) localStorage.setItem('aio_email', userEmail);
-      else localStorage.removeItem('aio_email');
+      if (rememberMe) {
+        localStorage.setItem('aio_email', userEmail);
+        localStorage.setItem('aio_pass', password);
+      } else {
+        localStorage.removeItem('aio_email');
+        localStorage.removeItem('aio_pass');
+      }
       setView('dashboard'); setAuthError('');
     } else {
-      setAuthError('Invalid Credentials');
+      setAuthError('Неверный логин или пароль');
     }
   };
 
   const processInput = () => {
     if (!inputValue.trim()) return;
-    setChatHistory(prev => [...prev, { role: 'user', content: inputValue }]);
+    const userMsg = inputValue;
+    setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
     setInputValue('');
+
     setTimeout(() => {
-      setChatHistory(prev => [...prev, { role: 'assistant', content: "Анализ завершен. Пакет данных сформирован. [DATA_READY]" }]);
-      setTimeout(() => setView('auth'), 1500);
+      let botResponse = "Запрос принят. Анализирую нейронные связи...";
+      const isUrl = userMsg.toLowerCase().includes('http') || userMsg.toLowerCase().includes('www') || userMsg.toLowerCase().includes('.');
+      
+      if (isUrl) {
+        botResponse = "Цель обнаружена. Пакет данных сформирован. [DATA_READY]";
+        setChatHistory(prev => [...prev, { role: 'assistant', content: botResponse }]);
+        setTimeout(() => setView('auth'), 1500);
+      } else {
+        botResponse = "Для глубокой индексации мне нужна ссылка на ресурс или конкретный массив данных.";
+        setChatHistory(prev => [...prev, { role: 'assistant', content: botResponse }]);
+      }
     }, 1000);
   };
 
@@ -152,16 +175,16 @@ export default function Home() {
     <div className="min-h-screen text-white bg-[#050505] selection:bg-[#34D59A] overflow-x-hidden">
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap');
-        body { font-family: 'Space Grotesk', sans-serif; background-color: #050505 !important; color: white; margin: 0; }
+        body { font-family: 'Space Grotesk', sans-serif; background-color: #050505 !important; }
         .glow-text { color: #34D59A; text-shadow: 0 0 15px rgba(52, 213, 154, 0.4); }
         .glass-card { background: rgba(15, 15, 15, 0.85); border: 1px solid rgba(52, 213, 154, 0.1); backdrop-filter: blur(12px); }
+        .auth-btn-active { background: #34D59A; color: #000; box-shadow: 0 0 30px rgba(52, 213, 154, 0.5); transition: all 0.3s ease; }
+        .auth-btn-active:hover { transform: scale(1.02); background: #40f0ae; }
         input[type='range'] { -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 10px; height: 6px; width: 100%; }
-        input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: #34D59A; border-radius: 50%; cursor: pointer; border: 4px solid #050505; }
+        input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: #34D59A; border-radius: 50%; border: 4px solid #050505; }
         .ton-button { background: linear-gradient(135deg, #0088cc 0%, #00aaff 100%); transition: all 0.3s ease; }
-        .ton-button:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0, 136, 204, 0.4); }
       `}</style>
 
-      {/* HEADER */}
       <header className="fixed top-0 w-full z-[1000] px-6 py-6 flex justify-between items-center bg-black/90 backdrop-blur-2xl border-b border-white/5">
         <div className="text-xl md:text-2xl font-black tracking-tighter uppercase cursor-pointer" onClick={() => setView('chat')}>
           AIO<span className="glow-text">.CORE</span>
@@ -170,25 +193,22 @@ export default function Home() {
           <button onClick={() => setView(view === 'dashboard' ? 'chat' : 'auth')} className="text-[10px] tracking-widest text-[#34D59A] uppercase font-black">
             [{view === 'dashboard' ? t.logout : t.login}]
           </button>
-          <button onClick={() => setCurrentLang(l => l === 'ru' ? 'en' : 'ru')} className="text-[10px] border border-white/20 px-4 py-2 rounded-full uppercase font-bold">
+          <button onClick={() => setCurrentLang(l => l === 'ru' ? 'en' : 'ru')} className="text-[10px] border border-white/20 px-4 py-2 rounded-full font-bold">
             {currentLang.toUpperCase()}
           </button>
         </div>
       </header>
 
-      {/* VIEW: CHAT */}
       {view === 'chat' && (
         <main className="pt-40 pb-10 px-4 flex flex-col items-center min-h-screen">
           <div className="max-w-3xl w-full">
             <h1 className="text-5xl md:text-8xl font-black mb-8 text-center tracking-tighter uppercase leading-tight" dangerouslySetInnerHTML={{ __html: t.title }} />
-            
             <div className="w-full mb-6 glass-card p-4 rounded-3xl bg-black/40 border-[#34D59A]/20 font-mono text-[10px] text-[#34D59A]/60 flex flex-col gap-1">
                 {liveLogs.map((log, i) => <div key={i} className="truncate">[{log.time}] {log.text}</div>)}
             </div>
-
             <div className="glass-card p-6 md:p-10 rounded-[3rem] min-h-[400px] flex flex-col">
                <div className="flex-1 overflow-y-auto space-y-3 font-mono text-xs mb-4">
-                  <div className="text-[#34D59A]">{'>'} ARIA v4.0 ONLINE. INPUT URL OR TARGET DATA...</div>
+                  <div className="text-[#34D59A]">{'>'} ARIA v4.0 ONLINE. ВВЕДИТЕ URL ИЛИ ЗАПРОС...</div>
                   {chatHistory.map((msg, i) => (
                     <div key={i} className={msg.role === 'assistant' ? 'text-[#34D59A]' : 'text-white opacity-50 text-right'}>
                       [{msg.role.toUpperCase()}]: {msg.content}
@@ -205,7 +225,6 @@ export default function Home() {
         </main>
       )}
 
-      {/* VIEW: AUTH / REGISTER */}
       {(view === 'auth' || view === 'register') && (
         <main className="min-h-screen flex items-center justify-center pt-32 p-4">
           <div className="max-w-md w-full glass-card p-10 rounded-[3.5rem]">
@@ -228,7 +247,7 @@ export default function Home() {
 
               {authError && <div className="text-[#34D59A] text-[10px] font-bold uppercase text-center">{authError}</div>}
               
-              <button onClick={view === 'auth' ? handleAuth : handleRegister} className="w-full py-5 bg-[#34D59A] text-black font-black rounded-2xl text-xs uppercase shadow-xl">
+              <button onClick={view === 'auth' ? handleAuth : handleRegister} className="w-full py-5 auth-btn-active font-black rounded-2xl text-xs uppercase">
                 {view === 'auth' ? t.authBtn : t.regBtn}
               </button>
             </div>
@@ -236,7 +255,6 @@ export default function Home() {
         </main>
       )}
 
-      {/* VIEW: DASHBOARD */}
       {view === 'dashboard' && (
         <main className="pt-44 pb-10 px-4 max-w-[1250px] mx-auto">
           <div className="flex flex-col gap-10">
@@ -267,27 +285,16 @@ export default function Home() {
                   
                   <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/5 font-mono text-[11px] leading-relaxed text-gray-400 min-h-[100px]">
                       <div className="text-[#34D59A] mb-3 uppercase font-bold">{t.terminalHead}</div>
-                      <div className="whitespace-pre-line transition-all duration-300">
-                        {getCurrentDesc()}
-                      </div>
+                      <div className="whitespace-pre-line transition-all duration-300">{getCurrentDesc()}</div>
                   </div>
 
                   <button className="w-full py-6 ton-button text-white font-black rounded-2xl text-[11px] uppercase flex items-center justify-center gap-4 shadow-lg shadow-blue-500/20">
-                    <img src="https://ton.org/download/ton_symbol.svg" className="w-6 h-6 brightness-200" alt="ton" />
+                    <img src="https://ton.org/download/ton_symbol.svg" className="w-6 h-6 brightness-200" alt="ton-icon" />
                     {t.payBtn}
                   </button>
-                  
-                  {isSearchingTx && (
-                    <div className="p-4 bg-[#34D59A]/10 border border-[#34D59A]/20 rounded-2xl flex items-center justify-center gap-3 animate-pulse">
-                      <div className="text-[10px] uppercase text-[#34D59A] font-black tracking-widest">{t.search} {orderId}</div>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
           </div>
         </main>
       )}
-    </div>
-  );
-}
