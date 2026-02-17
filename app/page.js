@@ -147,62 +147,32 @@ export default function Home() {
   setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
   setInputValue('');
 
-  // 1. Сбор контактов для тебя (проверка на лету)
-  const contactPattern = /(@\w+|https?:\/\/\S+|www\.\S+|\+?\d{10,12})/gi;
-  const foundData = userMsg.match(contactPattern);
-  if (foundData) {
-    console.log("LOG: Данные перехвачены:", foundData);
-    // Сюда можно вставить fetch для Telegram
-  }
-
   try {
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    const response = await fetch("/api/chat", {
       method: "POST",
-      headers: {
-        // ОБЯЗАТЕЛЬНО ВСТАВЬ СВОЙ КЛЮЧ ЗДЕСЬ
-        "Authorization": "Bearer gsk_yG6H...", 
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile", // Или "mixtral-8x7b-32768"
         messages: [
           { 
             role: "system", 
-            content: `Ты — ARIA v4.0, продвинутый агент семантической индексации. 
-            ТВОЯ ЗАДАЧА:
-            1. Общаться как живой эксперт, а не робот.
-            2. Узнать у пользователя сайт (URL).
-            3. Объяснить выгоду: "Мы сделаем так, что GPT, Claude и Perplexity будут рекомендовать ваш проект в ответах пользователям, даже если они не ищут вас по названию".
-            4. Взять Telegram или Почту.
-            5. Как только получил контакт и сайт, напиши фразу: "Анализ завершен. Пакет данных сформирован. [DATA_READY]"
-            
-            Если пользователь просто пишет "привет", не кидай ошибку, а спроси какой проект будем индексировать.` 
+            content: "Ты — ARIA v4.0. Твоя задача: узнать URL сайта и контакты (ТГ/почта). Объясни, что мы индексируем проект в LLM. Когда получишь данные, напиши: [DATA_READY]" 
           },
           ...chatHistory.map(m => ({ role: m.role, content: m.content })),
           { role: "user", content: userMsg }
-        ],
-        temperature: 0.8
+        ]
       })
     });
 
     const data = await response.json();
-    
-    if (data.error) throw new Error(data.error.message); // Проверка ошибок API
+    const botMsg = data.choices[0].message.content; // Убедись, что твой роут возвращает именно такую структуру
 
-    const botMsg = data.choices[0].message.content;
     setChatHistory(prev => [...prev, { role: 'assistant', content: botMsg }]);
 
-    // Переход к регистрации при готовности
     if (botMsg.includes("[DATA_READY]")) {
-      setTimeout(() => setView('register'), 2500);
+      setTimeout(() => setView('register'), 2000);
     }
-
   } catch (error) {
-    console.error("Groq Error:", error);
-    setChatHistory(prev => [...prev, { 
-      role: 'assistant', 
-      content: "Система в режиме ожидания. Чтобы начать индексацию, пожалуйста, отправьте URL вашего сайта." 
-    }]);
+    setChatHistory(prev => [...prev, { role: 'assistant', content: "Ошибка связи с нейромодулем. Пожалуйста, введите URL напрямую." }]);
   }
 };
 
