@@ -142,39 +142,38 @@ export default function Home() {
   };
 
   const processInput = async () => {
-  if (!inputValue.trim()) return;
-  const userMsg = inputValue;
-  
-  // Сохраняем сообщение в историю сразу
-  const newHistory = [...chatHistory, { role: 'user', content: userMsg }];
-  setChatHistory(newHistory);
-  setInputValue('');
+    if (!inputValue.trim()) return;
+    const userMsg = inputValue;
+    
+    // Сразу добавляем сообщение пользователя в историю на экране
+    setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
+    setInputValue('');
 
-  try {
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: userMsg,       // Твой бэкенд ждет 'message'
-        history: chatHistory,   // Твой бэкенд ждет 'history'
-        lang: currentLang       // Твой бэкенд ждет 'lang'
-      })
-    });
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: userMsg,       // Твое сообщение
+          history: chatHistory,   // ВСЯ история (чтобы ИИ не тупил и помнил сайт)
+          lang: currentLang       // Текущий язык (ru или en)
+        })
+      });
 
-    const data = await response.json();
-    const botMsg = data.reply; // Твой бэкенд возвращает { reply: "текст" }
+      const data = await response.json();
+      const botMsg = data.reply;
 
-    setChatHistory(prev => [...prev, { role: 'assistant', content: botMsg }]);
+      setChatHistory(prev => [...prev, { role: 'assistant', content: botMsg }]);
 
-    // Если ИИ выдал кодовое слово — перекидываем на регистрацию
-    if (botMsg.includes("[DATA_READY]")) {
-      setTimeout(() => setView('register'), 2500);
+      // Если ИИ закончил и выдал кодовое слово — идем на регистрацию
+      if (botMsg.includes("[DATA_READY]")) {
+        setTimeout(() => setView('register'), 2000);
+      }
+    } catch (error) {
+      console.error("Ошибка чата:", error);
+      setChatHistory(prev => [...prev, { role: 'assistant', content: "Сбой системы. Повторите ввод." }]);
     }
-  } catch (error) {
-    console.error("Fetch error:", error);
-    setChatHistory(prev => [...prev, { role: 'assistant', content: "PROTOCOL_ERROR: CONNECTION_TIMEOUT" }]);
-  }
-};
+  };
 
   const getCurrentDesc = () => {
     return t.levels.find(l => price <= l.upTo)?.desc || t.levels[3].desc;
