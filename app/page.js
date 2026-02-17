@@ -35,6 +35,7 @@ export default function Home() {
       remember: 'Запомнить меня',
       terminalHead: '> ВЫВОД ТЕРМИНАЛА:',
       search: 'Поиск транзакции в блокчейне...',
+      payBtn: 'Оплатить через Tonkeeper',
       levels: [
         { upTo: 150, desc: "- Базовый захват векторов\n- Индексация GPT-4: Стандарт\n- Обновление: 24ч" },
         { upTo: 250, desc: "- Глубокое семантическое картирование\n- Приоритет узлов: Средний\n- Обновление: 12ч" },
@@ -53,6 +54,7 @@ export default function Home() {
       remember: 'Remember me',
       terminalHead: '> TERMINAL OUTPUT:',
       search: 'Searching blockchain transaction...',
+      payBtn: 'Pay via Tonkeeper',
       levels: [
         { upTo: 150, desc: "- Basic vector capture\n- GPT-4 Indexing: Standard\n- Refresh: 24h" },
         { upTo: 250, desc: "- Deep semantic mapping\n- Node priority: Medium\n- Refresh: 12h" },
@@ -72,7 +74,6 @@ export default function Home() {
     if (rememberedEmail) { setUserEmail(rememberedEmail); setRememberMe(true); }
   }, []);
 
-  // Live Terminal Logic
   useEffect(() => {
     const lines = ["Vectorizing node #412...", "RAG Sync: 99.2%", "LLM Context sync...", "Weights adjusted", "Gateway: Ready"];
     const interval = setInterval(() => {
@@ -84,7 +85,6 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // Canvas 3D
   useEffect(() => {
     if (view !== 'dashboard' || !canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -92,6 +92,7 @@ export default function Home() {
     let frame;
     let offset = 0;
     const render = () => {
+      if (!canvas) return;
       canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const cx = canvas.width / 2; const cy = canvas.height / 2;
@@ -121,7 +122,7 @@ export default function Home() {
 
   const handleAuth = () => {
     const savedPass = localStorage.getItem(`user_${userEmail}`);
-    if (userEmail === 'admin@aio.core' && password === '772109' || savedPass === password) {
+    if ((userEmail === 'admin@aio.core' && password === '772109') || savedPass === password) {
       localStorage.setItem('aio_session', 'active');
       if (rememberMe) localStorage.setItem('aio_email', userEmail);
       else localStorage.removeItem('aio_email');
@@ -145,17 +146,19 @@ export default function Home() {
     return t.levels.find(l => price <= l.upTo)?.desc || t.levels[3].desc;
   };
 
-  if (view === 'loading') return <div className="bg-black min-h-screen" />;
+  if (view === 'loading') return <div className="bg-[#050505] min-h-screen" />;
 
   return (
     <div className="min-h-screen text-white bg-[#050505] selection:bg-[#34D59A] overflow-x-hidden">
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap');
-        body { font-family: 'Space Grotesk', sans-serif; }
+        body { font-family: 'Space Grotesk', sans-serif; background-color: #050505 !important; color: white; margin: 0; }
         .glow-text { color: #34D59A; text-shadow: 0 0 15px rgba(52, 213, 154, 0.4); }
         .glass-card { background: rgba(15, 15, 15, 0.85); border: 1px solid rgba(52, 213, 154, 0.1); backdrop-filter: blur(12px); }
         input[type='range'] { -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 10px; height: 6px; width: 100%; }
         input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: #34D59A; border-radius: 50%; cursor: pointer; border: 4px solid #050505; }
+        .ton-button { background: linear-gradient(135deg, #0088cc 0%, #00aaff 100%); transition: all 0.3s ease; }
+        .ton-button:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0, 136, 204, 0.4); }
       `}</style>
 
       {/* HEADER */}
@@ -179,7 +182,6 @@ export default function Home() {
           <div className="max-w-3xl w-full">
             <h1 className="text-5xl md:text-8xl font-black mb-8 text-center tracking-tighter uppercase leading-tight" dangerouslySetInnerHTML={{ __html: t.title }} />
             
-            {/* ACTIVE TERMINAL MAIN */}
             <div className="w-full mb-6 glass-card p-4 rounded-3xl bg-black/40 border-[#34D59A]/20 font-mono text-[10px] text-[#34D59A]/60 flex flex-col gap-1">
                 {liveLogs.map((log, i) => <div key={i} className="truncate">[{log.time}] {log.text}</div>)}
             </div>
@@ -196,7 +198,7 @@ export default function Home() {
                </div>
                <div className="flex gap-4 border-t border-white/5 pt-6">
                   <input className="bg-transparent outline-none text-[#34D59A] flex-1" placeholder="..." value={inputValue} onChange={(e)=>setInputValue(e.target.value)} onKeyDown={(e)=>e.key==='Enter' && processInput()}/>
-                  <button onClick={processInput} className="text-[#34D59A] text-2xl">➤</button>
+                  <button onClick={processInput} className="text-[#34D59A] text-xl">➤</button>
                </div>
             </div>
           </div>
@@ -224,7 +226,7 @@ export default function Home() {
                 </button>
               </div>
 
-              {authError && <div className="text-[#34D59A] text-[10px] font-bold uppercase text-center animate-pulse">{authError}</div>}
+              {authError && <div className="text-[#34D59A] text-[10px] font-bold uppercase text-center">{authError}</div>}
               
               <button onClick={view === 'auth' ? handleAuth : handleRegister} className="w-full py-5 bg-[#34D59A] text-black font-black rounded-2xl text-xs uppercase shadow-xl">
                 {view === 'auth' ? t.authBtn : t.regBtn}
@@ -264,15 +266,15 @@ export default function Home() {
                   <input type="range" min="100" max="499" value={price} onChange={(e) => setPrice(e.target.value)} />
                   
                   <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/5 font-mono text-[11px] leading-relaxed text-gray-400 min-h-[100px]">
-                      <div className="text-[#34D59A] mb-3 uppercase font-bold animate-pulse">{t.terminalHead}</div>
+                      <div className="text-[#34D59A] mb-3 uppercase font-bold">{t.terminalHead}</div>
                       <div className="whitespace-pre-line transition-all duration-300">
                         {getCurrentDesc()}
                       </div>
                   </div>
 
-                  <button className="w-full py-6 bg-blue-500 text-white font-black rounded-2xl text-xs uppercase flex items-center justify-center gap-4 shadow-xl hover:opacity-80 transition-all">
+                  <button className="w-full py-6 ton-button text-white font-black rounded-2xl text-[11px] uppercase flex items-center justify-center gap-4 shadow-lg shadow-blue-500/20">
                     <img src="https://ton.org/download/ton_symbol.svg" className="w-6 h-6 brightness-200" alt="ton" />
-                    Pay with Tonkeeper
+                    {t.payBtn}
                   </button>
                   
                   {isSearchingTx && (
