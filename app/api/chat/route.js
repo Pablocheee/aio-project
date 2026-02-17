@@ -37,17 +37,25 @@ export async function POST(req) {
     const data = await groqRes.json();
     const reply = data.choices[0].message.content;
 
-    // 2. Уведомление в Telegram, если заказ готов
-    if (reply.includes('[DATA_READY]')) {
-      const report = `💎 NEW LEAD\nMsg: ${message}\nLang: ${lang}`;
+    // 2. Уведомление в Telegram (Улучшенная логика)
+    const hasLink = message.includes('.') || message.includes('http');
+    const hasContact = message.includes('@') || message.includes('t.me');
+    const isReady = reply.includes('[DATA_READY]');
+
+    // Отправляем, если есть хоть какая-то зацепка или ИИ закончил диалог
+    if (isReady || hasLink || hasContact) {
+      const report = `🚀 **НОВЫЙ ЛИД AIO.CORE**\n\n` +
+                     `👤 Контакт/Сайт: ${message}\n` +
+                     `🤖 Ответ ИИ: ${reply}\n` +
+                     `🌍 Язык: ${lang}`;
       
-      // Отправляем в ТГ фоном (не ждем ответа, чтобы не тормозить чат)
       fetch(`https://api.telegram.org/bot${process.env.TG_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           chat_id: process.env.TG_CHAT_ID, 
-          text: report 
+          text: report,
+          parse_mode: 'HTML' 
         })
       }).catch(err => console.error("TG Error:", err));
     }
