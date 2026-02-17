@@ -66,17 +66,17 @@ export default function Home() {
     <div className="relative min-h-screen bg-[#050505] text-white font-sans overflow-x-hidden selection:bg-emerald-500/30">
       {/* ВИДЕО ФОН (из твоих файлов) */}
       <div className="fixed inset-0 z-0 opacity-40 pointer-events-none">
-        <video 
-          autoPlay 
-          muted 
-          loop 
-          playsInline 
-          poster="/poster.avif"
-          className="w-full h-full object-cover"
-        >
-          <source src="/hero-av1.mp4" type="video/mp4" />
-          <source src="/hero.webm" type="video/webm" />
-        </video>
+<video 
+  autoPlay 
+  muted 
+  loop 
+  playsInline 
+  poster="/poster.avif" // Проверь, чтобы в public был именно poster.avif, а не poster_002.avif
+  className="w-full h-full object-cover"
+>
+  <source src="/hero-av1.mp4" type="video/mp4" />
+  <source src="/hero.mp4" type="video/mp4" />
+</video>
         {/* Градиент поверх видео для читаемости */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505]" />
       </div>
