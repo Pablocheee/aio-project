@@ -26,21 +26,29 @@ export default function Home() {
   ]); 
 
   // 2. Функция проверки транзакции
+  // 2. Функция проверки транзакции
   const checkTransaction = () => { 
     if (isSearchingTx) return; 
      
     setIsSearchingTx(true); 
 
-    setTimeout(() => { 
-      setBalance(prev => prev + parseFloat(price)); 
-      setIsSearchingTx(false); 
-       
-      setLiveLogs(prev => [ 
-        { time: new Date().toLocaleTimeString(), text: `TX_CONFIRMED: +${price} USDT` }, 
-        ...prev 
-      ]); 
-    }, 6000); 
-  };
+    setTimeout(() => {
+      const newAmount = balance + parseFloat(price);
+      setBalance(newAmount);
+      
+      // Сохраняем обновленный баланс в LocalStorage для конкретного юзера
+      const data = JSON.parse(localStorage.getItem(`user_${userEmail}`) || '{}');
+      data.balance = newAmount;
+      localStorage.setItem(`user_${userEmail}`, JSON.stringify(data));
+
+      setIsSearchingTx(false);
+      setLiveLogs(prev => [
+        { time: new Date().toLocaleTimeString(), text: `TX_CONFIRMED: +${price} USDT` },
+        ...prev
+      ]);
+    }, 6000);
+  }; // <--- ВОТ ЭТУ СКОБКУ ТЫ ПРОПУСТИЛ
+    
 
   // ТУТ СРАЗУ ДОЛЖНА ИДТИ СЛЕДУЮЩАЯ ТВОЯ ФУНКЦИЯ (например, handleAuth)
   // НИКАКИХ ПОВТОРОВ const [liveLogs...] БОЛЬШЕ БЫТЬ НЕ ДОЛЖНО
@@ -141,26 +149,58 @@ export default function Home() {
 
   const handleRegister = () => {
     if (!userEmail || !password) return setAuthError('Fill all fields');
-    localStorage.setItem(`user_${userEmail}`, password);
-    setAuthError('Account created! Please login.');
-    setTimeout(() => { setAuthError(''); setView('auth'); }, 2000);
+    
+    // Проверяем, не занят ли email
+    const existingUser = localStorage.getItem(`user_${userEmail}`);
+    if (existingUser) return setAuthError('Email already registered');
+
+    // Сохраняем объект пользователя (пароль + баланс)
+    const userData = {
+      password: password,
+      balance: 0,
+      orderId: Math.floor(100000 + Math.random() * 900000).toString()
+    };
+    
+    localStorage.setItem(`user_${userEmail}`, JSON.stringify(userData));
+    setAuthError('Account created! Initializing...');
+    
+    setTimeout(() => { 
+      setAuthError(''); 
+      setView('auth'); 
+    }, 2000);
   };
 
   const handleAuth = () => {
-    const savedPass = localStorage.getItem(`user_${userEmail}`);
-    if ((userEmail === 'admin@aio.core' && password === '772109') || savedPass === password) {
-      localStorage.setItem('aio_session', 'active');
-      if (rememberMe) {
-        localStorage.setItem('aio_email', userEmail);
-        localStorage.setItem('aio_pass', password); // Сохраняем пароль
-      } else {
-        localStorage.removeItem('aio_email');
-        localStorage.removeItem('aio_pass');
+    const data = localStorage.getItem(`user_${userEmail}`);
+    
+    if (data) {
+      const user = JSON.parse(data);
+      if (user.password === password) {
+        // Успешный вход
+        localStorage.setItem('aio_session', 'active');
+        localStorage.setItem('aio_current_user', userEmail); // Запоминаем кто залогинен
+        
+        setBalance(user.balance || 0);
+        // Если хочешь сохранять сессию:
+        if (rememberMe) {
+          localStorage.setItem('aio_email', userEmail);
+          localStorage.setItem('aio_pass', password);
+        }
+        
+        setView('dashboard');
+        setAuthError('');
+        return;
       }
-      setView('dashboard'); setAuthError('');
-    } else {
-      setAuthError('Invalid Credentials');
     }
+    
+    // Если это админский вход (твой бэкдор)
+    if (userEmail === 'admin@aio.core' && password === '772109') {
+      localStorage.setItem('aio_session', 'active');
+      setView('dashboard');
+      return;
+    }
+
+    setAuthError('Invalid Credentials');
   };
 
   const processInput = async () => {
