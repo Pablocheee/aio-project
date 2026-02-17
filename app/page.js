@@ -2,19 +2,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 export default function Home() {
-  const [view, setView] = useState('chat'); // 'chat', 'auth', 'dashboard'
+  const [view, setView] = useState('chat'); 
   const [currentLang, setCurrentLang] = useState('ru');
   const [chatHistory, setChatHistory] = useState([]);
   const [inputValue, setInputValue] = useState('');
-  const [orderId, setOrderId] = useState('');
+  const [orderId, setOrderId] = useState('772109');
   
-  // Состояния пользователя
+  // Состояния для тарифа
+  const [price, setPrice] = useState(100);
   const [userEmail, setUserEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSearchingTx, setIsSearchingTx] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState(null);
 
-  // Живая консоль
+  // Консоль
   const [liveLogs, setLiveLogs] = useState([
     { time: new Date().toLocaleTimeString(), text: "System bridge established..." },
     { time: new Date().toLocaleTimeString(), text: "Neural core: Standby" }
@@ -32,7 +32,8 @@ export default function Home() {
       authBtn: 'Установить соединение',
       cabinet: 'Панель управления',
       payTon: 'Оплатить через Tonkeeper',
-      status: 'Статус транзакции'
+      status: 'Статус транзакции',
+      nodes: 'Активных узлов'
     },
     en: { 
       title: 'SEMANTIC <span class="glow-text italic">INDEXING</span>', 
@@ -43,19 +44,19 @@ export default function Home() {
       authBtn: 'Establish Connection',
       cabinet: 'Control Panel',
       payTon: 'Pay via Tonkeeper',
-      status: 'Transaction Status'
+      status: 'Transaction Status',
+      nodes: 'Active Nodes'
     }
   };
 
   const t = translations[currentLang];
 
-  // Имитация работы консоли
   useEffect(() => {
-    const lines = ["Vectorizing node #412...", "RAG Sync: 99.2%", "LLM Context optimization...", "Semantic weight adjusted", "TRC20 Gateway: Ready", "Scanning metadata..."];
+    const lines = ["Vectorizing node #412...", "RAG Sync: 99.2%", "LLM Context optimization...", "Semantic weight adjusted", "TRC20 Gateway: Ready"];
     const interval = setInterval(() => {
       setLiveLogs(prev => {
         const next = { time: new Date().toLocaleTimeString(), text: lines[Math.floor(Math.random() * lines.length)] };
-        return [...prev, next].slice(-5);
+        return [...prev, next].slice(-3);
       });
     }, 3000);
     return () => clearInterval(interval);
@@ -63,23 +64,21 @@ export default function Home() {
 
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [chatHistory]);
 
-  const processInput = async () => {
+  const processInput = () => {
     if (!inputValue.trim()) return;
     setChatHistory(prev => [...prev, { role: 'user', content: inputValue }]);
     setInputValue('');
-    // Эмуляция ответа и перехода
     setTimeout(() => {
-      setChatHistory(prev => [...prev, { role: 'assistant', content: "Данные проанализированы. Для завершения индексации перейдите в кабинет. [DATA_READY]" }]);
-      setOrderId(Math.floor(100000 + Math.random() * 900000));
-      setTimeout(() => setView('auth'), 1000);
+      setChatHistory(prev => [...prev, { role: 'assistant', content: "Анализ завершен. Пакет данных сформирован. Перейдите в кабинет для активации. [DATA_READY]" }]);
+      setTimeout(() => setView('auth'), 1500);
     }, 1000);
   };
 
   const handleTonkeeperPay = () => {
-    const amount = selectedPlan ? selectedPlan.price * 1000000000 : 1000000000; // нано-тоны
     const address = "UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY";
-    const link = `ton://transfer/${address}?amount=${amount}&text=Inbound-Index-${orderId}`;
-    window.location.href = link;
+    const amountInNanotons = (price * 1000000000).toString(); // Примерная конвертация
+    const link = `ton://transfer/${address}?amount=${amountInNanotons}&text=Index-${orderId}`;
+    window.location.assign(link);
     setIsSearchingTx(true);
   };
 
@@ -92,11 +91,8 @@ export default function Home() {
         .glass-card { background: rgba(15, 15, 15, 0.7); border: 1px solid rgba(52, 213, 154, 0.1); backdrop-filter: blur(20px); }
         .bot-msg { color: #34D59A; font-family: monospace; font-size: 13px; margin-bottom: 16px; border-left: 2px solid #34D59A; padding-left: 14px; }
         .user-msg { color: #fff; font-family: monospace; font-size: 13px; opacity: 0.5; margin-bottom: 16px; text-align: right; border-right: 2px solid rgba(255,255,255,0.1); padding-right: 14px; }
-        .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
-          to { opacity: 1; transform: translateY(0); filter: blur(0); }
-        }
+        input[type='range'] { -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 10px; height: 6px; }
+        input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: #34D59A; border-radius: 50%; cursor: pointer; box-shadow: 0 0 10px #34D59A; }
       `}</style>
 
       {/* HEADER */}
@@ -104,47 +100,49 @@ export default function Home() {
         <div className="text-xl font-bold tracking-tighter uppercase cursor-pointer" onClick={() => setView('chat')}>
           AIO<span className="glow-text">.CORE</span>
         </div>
-        
         <div className="flex gap-6 items-center">
-          {view !== 'dashboard' ? (
-            <button onClick={() => setView('auth')} className="text-[10px] tracking-widest text-gray-400 hover:text-[#34D59A] uppercase font-bold transition-colors">
-              [ {t.login} ]
-            </button>
-          ) : (
-            <button onClick={() => setView('chat')} className="text-[10px] tracking-widest text-red-500 hover:text-red-400 uppercase font-bold transition-colors">
-              [ {t.logout} ]
-            </button>
-          )}
-          
+          <button onClick={() => setView(view === 'dashboard' ? 'chat' : 'auth')} className="text-[10px] tracking-widest text-gray-400 hover:text-[#34D59A] uppercase font-bold">
+            [ {view === 'dashboard' ? t.logout : t.login} ]
+          </button>
           <button onClick={() => setCurrentLang(l => l === 'ru' ? 'en' : 'ru')} className="text-[10px] border border-white/10 px-4 py-1.5 rounded-full uppercase hover:bg-white hover:text-black transition-all font-bold">
             {currentLang === 'ru' ? 'EN' : 'RU'}
           </button>
         </div>
       </header>
 
-      {/* VIEW: CHAT & CONSOLE */}
+      {/* VIEW: CHAT */}
       {view === 'chat' && (
-        <main className="pt-32 pb-20 px-6 flex flex-col items-center min-h-screen animate-in fade-in duration-500">
+        <main className="pt-32 pb-20 px-6 flex flex-col items-center min-h-screen">
           <div className="max-w-3xl w-full">
-            <div className="text-center mb-16">
+            <div className="text-center mb-10">
               <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter uppercase leading-[0.9]" dangerouslySetInnerHTML={{ __html: t.title }} />
               <p className="text-gray-500 text-sm tracking-widest uppercase font-light">{t.desc}</p>
             </div>
 
-            <div className="glass-card p-10 rounded-[3.5rem] h-[500px] flex flex-col relative overflow-hidden">
-              {/* CONSOLE OVERLAY - ВОЗВРАЩЕНА */}
-              <div className="absolute top-6 right-10 text-[8px] font-mono text-[#34D59A]/60 text-right leading-tight uppercase z-10">
-                {liveLogs.map((log, i) => <div key={i} className="mb-1">[{log.time}] {log.text}</div>)}
+            {/* КОНСОЛЬ НАД ЧАТОМ */}
+            <div className="w-full mb-4 glass-card p-4 rounded-3xl bg-black/40 border-[#34D59A]/20">
+              <div className="flex justify-between items-center mb-2 px-2">
+                <span className="text-[9px] uppercase text-[#34D59A] font-bold tracking-widest">Live Engine Console</span>
+                <span className="flex gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></span>
+                </span>
               </div>
+              <div className="font-mono text-[10px] text-[#34D59A]/60 flex flex-col gap-1">
+                {liveLogs.map((log, i) => <div key={i}>[{log.time}] {log.text}</div>)}
+              </div>
+            </div>
 
-              <div className="flex-1 overflow-y-auto mb-6 pr-4 space-y-2">
-                {chatHistory.length === 0 && <div className="bot-msg">{'>'} ARIA v4.0.0-STABLE READY. Waiting for input...</div>}
+            {/* ОКНО ЧАТА */}
+            <div className="glass-card p-10 rounded-[3.5rem] h-[450px] flex flex-col relative overflow-hidden">
+              <div className="flex-1 overflow-y-auto mb-6 pr-4 space-y-2 scrollbar-hide">
+                {chatHistory.length === 0 && <div className="bot-msg">{'>'} ARIA v4.0.0-STABLE. Waiting for project link...</div>}
                 {chatHistory.map((msg, i) => (
                   <div key={i} className={msg.role === 'assistant' ? 'bot-msg' : 'user-msg'}>{msg.content}</div>
                 ))}
                 <div ref={chatEndRef} />
               </div>
-              <div className="flex gap-6 items-center border-t border-white/5 pt-6">
+              <div className="flex gap-6 items-center pt-2">
                 <input 
                   className="bg-transparent outline-none text-[#34D59A] flex-1 font-mono text-sm placeholder:text-gray-700"
                   placeholder={t.place}
@@ -159,23 +157,17 @@ export default function Home() {
         </main>
       )}
 
-      {/* VIEW: AUTH (ЧЕРНЫЙ ТЕКСТ В INPUT) */}
+      {/* VIEW: AUTH */}
       {view === 'auth' && (
-        <main className="min-h-screen flex items-center justify-center p-6">
-          <div className="max-w-md w-full glass-card p-12 rounded-[4rem] fade-in-up">
-            <h2 className="text-3xl font-black mb-10 tracking-tighter uppercase italic text-center">Identity Verification</h2>
+        <main className="min-h-screen flex items-center justify-center p-6 animate-in fade-in zoom-in-95 duration-500">
+          <div className="max-w-md w-full glass-card p-12 rounded-[4rem]">
+            <h2 className="text-3xl font-black mb-10 tracking-tighter uppercase italic text-center">Node Login</h2>
             <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-[8px] uppercase text-gray-500 ml-4 tracking-widest font-bold">Email</label>
-                <input type="email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)}
-                  className="w-full bg-white border border-white/10 rounded-2xl px-6 py-4 outline-none font-mono text-sm text-black" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[8px] uppercase text-gray-500 ml-4 tracking-widest font-bold">Secure Token</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white border border-white/10 rounded-2xl px-6 py-4 outline-none font-mono text-sm text-black" placeholder="••••••••" />
-              </div>
-              <button onClick={() => setView('dashboard')} className="w-full py-6 bg-[#34D59A] text-black font-black rounded-2xl text-[11px] uppercase shadow-2xl hover:bg-[#2bb582] transition-all transform active:scale-95">
+              <input type="email" value={userEmail} onChange={(e) => setUserEmail(e.target.value)}
+                className="w-full bg-white rounded-2xl px-6 py-4 outline-none font-mono text-sm text-black" placeholder="EMAIL" />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-white rounded-2xl px-6 py-4 outline-none font-mono text-sm text-black" placeholder="PASSWORD" />
+              <button onClick={() => setView('dashboard')} className="w-full py-6 bg-[#34D59A] text-black font-black rounded-2xl text-[11px] uppercase shadow-2xl">
                 {t.authBtn}
               </button>
             </div>
@@ -183,81 +175,83 @@ export default function Home() {
         </main>
       )}
 
-      {/* VIEW: DASHBOARD (БЕЗ ГЛЮЧНЫХ ПОЛОСОК) */}
+      {/* VIEW: DASHBOARD */}
       {view === 'dashboard' && (
-        <main className="pt-28 pb-20 px-8 flex gap-8 max-w-[1400px] mx-auto fade-in-up">
+        <main className="pt-28 pb-20 px-8 flex gap-8 max-w-[1400px] mx-auto animate-in slide-in-from-bottom-5 duration-700">
           {/* SIDEBAR */}
           <div className="hidden lg:flex flex-col w-64 space-y-4">
-            <div className="glass-card p-6 rounded-[2rem] bg-[#34D59A]/5 border-[#34D59A]/20">
-              <div className="text-[9px] uppercase font-bold text-[#34D59A] tracking-widest mb-2">Live Status</div>
-              <div className="text-xl font-black italic">14,204 <span className="text-[10px] text-gray-500">Nodes</span></div>
+            <div className="glass-card p-6 rounded-[2rem] border-[#34D59A]/30">
+              <div className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-2">Network Load</div>
+              <div className="text-2xl font-black italic">14.2K <span className="text-[10px] glow-text underline">NODES</span></div>
             </div>
-            {['Terminal', 'Semantic DB', 'API Access', 'Settings'].map((item, i) => (
-              <div key={i} className={`p-4 rounded-xl text-[10px] uppercase font-bold tracking-widest cursor-pointer transition-all ${i===0 ? 'bg-[#34D59A] text-black' : 'hover:bg-white/5 text-gray-500'}`}>
-                {item}
-              </div>
+            {['Terminal', 'Semantic Map', 'Billing'].map((m, i) => (
+              <div key={i} className={`p-4 rounded-xl text-[10px] uppercase font-bold tracking-widest cursor-pointer ${i===0 ? 'bg-[#34D59A] text-black' : 'text-gray-500 hover:bg-white/5'}`}>{m}</div>
             ))}
           </div>
 
-          {/* CONTENT */}
-          <div className="flex-1 space-y-10">
+          <div className="flex-1 space-y-8">
             <header className="flex justify-between items-end">
               <div>
                 <h2 className="text-5xl font-black tracking-tighter uppercase italic">{t.cabinet}</h2>
-                <div className="text-[10px] text-gray-500 font-mono mt-2 uppercase tracking-widest">UID: {orderId}-ALPHA</div>
+                <div className="text-[10px] text-gray-500 font-mono mt-1 uppercase">NODE_ID: {orderId}-ALPHA</div>
               </div>
               <div className="text-right">
-                <div className="text-[9px] uppercase text-gray-500 font-bold mb-1">Balance</div>
-                <div className="text-4xl font-black text-red-500">0.00 <span className="text-sm text-white opacity-20">USDT</span></div>
+                <div className="text-4xl font-black text-red-500">0.00 <span className="text-sm text-white/20 font-normal">USDT</span></div>
               </div>
             </header>
 
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* PLANS */}
-              <div className="space-y-4">
-                {[
-                  { id: 1, name: 'Core Traffic', price: 100 },
-                  { id: 2, name: 'Semantic Pro', price: 499 }
-                ].map((plan) => (
-                  <div key={plan.id} onClick={() => setSelectedPlan(plan)}
-                    className={`glass-card p-8 rounded-[2.5rem] cursor-pointer transition-all ${selectedPlan?.id === plan.id ? 'border-[#34D59A] bg-[#34D59A]/5' : 'opacity-60 hover:opacity-100'}`}>
-                    <div className="text-[10px] font-bold text-[#34D59A] uppercase tracking-widest mb-2">{plan.name}</div>
-                    <div className="text-4xl font-black italic">${plan.price}</div>
+            <div className="grid md:grid-cols-2 gap-10">
+              {/* СЛАЙДЕР ВЫБОРА ТАРИФА */}
+              <div className="glass-card p-10 rounded-[3.5rem] space-y-8">
+                <div className="flex justify-between items-center">
+                  <h4 className="text-[11px] uppercase font-bold text-gray-400 tracking-[0.2em]">Select Package Power</h4>
+                  <span className="text-[#34D59A] font-mono text-sm">${price}</span>
+                </div>
+                
+                <input 
+                  type="range" min="100" max="499" step="1" 
+                  value={price} onChange={(e) => setPrice(e.target.value)}
+                  className="w-full cursor-pointer"
+                />
+
+                <div className="grid grid-cols-2 gap-4 pt-4">
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-center">
+                    <div className="text-[9px] text-gray-500 uppercase mb-1">{t.nodes}</div>
+                    <div className="text-xl font-bold italic">{Math.floor(price * 12)}</div>
                   </div>
-                ))}
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-center">
+                    <div className="text-[9px] text-gray-500 uppercase mb-1">Retention</div>
+                    <div className="text-xl font-bold italic">365D</div>
+                  </div>
+                </div>
               </div>
 
-              {/* PAYMENT - TONKEEPER INTEGRATION */}
+              {/* ОПЛАТА */}
               <div className="glass-card p-10 rounded-[3.5rem] border-[#34D59A]/30">
-                <div className="text-center mb-10">
-                  <div className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-4 italic">Billing Protocol</div>
-                  <div className="text-4xl font-black italic">{selectedPlan ? selectedPlan.price : '---'} <span className="text-sm opacity-30">USDT / TON</span></div>
+                <div className="text-center mb-8">
+                  <div className="text-[10px] text-gray-500 uppercase font-bold mb-2 tracking-widest">Inbound Amount</div>
+                  <div className="text-5xl font-black italic">{price} <span className="text-lg opacity-20">USDT</span></div>
                 </div>
 
                 <div className="space-y-4">
-                  <button onClick={handleTonkeeperPay} className="w-full py-6 bg-blue-500 text-white font-black rounded-2xl text-[11px] uppercase flex items-center justify-center gap-3 hover:bg-blue-600 transition-all">
-                    <img src="https://ton.org/download/ton_symbol.svg" className="w-5 h-5 brightness-200" alt="" />
+                  <button onClick={handleTonkeeperPay} className="w-full py-6 bg-blue-500 text-white font-black rounded-2xl text-[11px] uppercase flex items-center justify-center gap-3 hover:scale-[1.02] transition-transform">
+                    <img src="https://ton.org/download/ton_symbol.svg" className="w-5 h-5 brightness-200" alt="ton" />
                     {t.payTon}
                   </button>
-                  
-                  <button onClick={() => setIsSearchingTx(true)} className="w-full py-6 border border-white/10 text-gray-400 font-black rounded-2xl text-[11px] uppercase hover:bg-white/5 transition-all">
-                    Verify Manual Transaction
+                  <button onClick={() => setIsSearchingTx(true)} className="w-full py-4 text-[9px] uppercase font-bold text-gray-500 tracking-widest hover:text-white transition-colors">
+                    Check Transaction Status
                   </button>
                 </div>
 
                 {isSearchingTx && (
-                  <div className="mt-8 p-4 bg-black/50 border border-[#34D59A]/20 rounded-xl animate-pulse">
-                    <div className="text-[9px] uppercase text-[#34D59A] font-bold text-center tracking-widest">
-                      {t.status}: Searching for inbound block...
+                  <div className="mt-6 p-4 bg-black/50 border border-[#34D59A]/20 rounded-2xl flex items-center gap-4">
+                    <div className="w-2 h-2 rounded-full bg-[#34D59A] animate-ping"></div>
+                    <div className="text-[9px] uppercase text-[#34D59A] font-bold tracking-widest">
+                      {t.status}: Indexing Blockchain...
                     </div>
                   </div>
                 )}
               </div>
-            </div>
-
-            {/* LIVE CONSOLE IN DASHBOARD */}
-            <div className="glass-card p-6 rounded-[2rem] h-40 bg-black/40 font-mono text-[10px] text-[#34D59A]/40 overflow-hidden">
-                {liveLogs.map((log, i) => <div key={i}>[{log.time}] {log.text}</div>)}
             </div>
           </div>
         </main>
