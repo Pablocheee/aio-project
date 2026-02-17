@@ -81,15 +81,23 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505]" />
       </div>
 
-      <style jsx global>{`
+<style jsx global>{`
         .glow-text { color: #34D59A; text-shadow: 0 0 15px rgba(52, 213, 154, 0.5); }
         .glass-card { background: rgba(10, 10, 10, 0.7); border: 1px solid rgba(52, 213, 154, 0.15); backdrop-filter: blur(25px); }
         .status-pulse { width: 8px; height: 8px; background: #34D59A; border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(52, 213, 154, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(52, 213, 154, 0); } 100% { box-shadow: 0 0 0 0 rgba(52, 213, 154, 0); } }
         
-        /* Декоративные паттерны из твоих картинок */
-        .bg-pattern-left { background-image: url('/left-pattern.png'); background-size: contain; background-repeat: no-repeat; }
-        .bg-pattern-right { background-image: url('/right-pattern.png'); background-size: contain; background-repeat: no-repeat; }
+        /* Исправленные пути к твоим файлам */
+        .bg-pattern-left { 
+          background-image: url('/left-pattern-lg.png'); 
+          background-size: contain; 
+          background-repeat: no-repeat; 
+        }
+        .bg-pattern-right { 
+          background-image: url('/right-pattern-lg.png'); 
+          background-size: contain; 
+          background-repeat: no-repeat; 
+        }
       `}</style>
 
       {/* Контент поверх видео */}
