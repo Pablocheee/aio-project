@@ -1,8 +1,9 @@
 import os
 import sys
+import httpx
 from fastapi import FastAPI
 
-# Магия путей, чтобы видеть папку core
+# Магия путей
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.gateway.gateway_bridge import GatewayBridge, FinancialIntent
@@ -10,33 +11,52 @@ from core.gateway.gateway_bridge import GatewayBridge, FinancialIntent
 app = FastAPI()
 bridge = GatewayBridge()
 
+# НАСТРОЙКИ ТЕЛЕГРАМА (Вставь свои данные)
+TG_TOKEN = "8552516975:AAF3AArF0cWXJj8yrbM3SWVnnZAohwzmeXc"
+MY_ID = "7318415778"
+
+async def send_to_tg(text: str):
+    url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
+    async with httpx.AsyncClient() as client:
+        await client.post(url, json={"chat_id": MY_ID, "text": text, "parse_mode": "HTML"})
+
 @app.get("/api/process")
 async def process_request(query: str = "check", wallet: str = None):
-    # Если кошелек передан в запросе, используем его, иначе — тестовый
     target_wallet = wallet or "UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY"
     
+    # 1. Проверяем кошелек через AIO Bridge
     intent = FinancialIntent(
         action="check_balance", 
         amount=0, 
         asset_source="TON", 
         destination_address=target_wallet
     )
-    
     result = await bridge.execute(intent)
-    
-    # ТУТ ЛОГИКА ДЛЯ ТВОЕГО ТЕЛЕГРАМА:
-    # Формируем строку для отправки (саму отправку оставь в своем боте)
-    status_msg = f"Заказ принят. Баланс клиента: {result.get('balance_ton', 0)} TON"
+    balance = result.get('balance_ton', 0)
+
+    # 2. Формируем отчет для тебя
+    report = (
+        f"<b>🚀 Новый запрос AIO.CORE</b>\n"
+        f"Запрос: {query}\n"
+        f"Кошелек: <code>{target_wallet}</code>\n"
+        f"Баланс: <b>{balance} TON</b>"
+    )
+
+    # 3. Отправляем в Telegram автоматически
+    try:
+        await send_to_tg(report)
+        tg_status = "Sent to Admin"
+    except Exception as e:
+        tg_status = f"Error: {e}"
     
     return {
-        "query": query, 
-        "result": result,
-        "telegram_ready_msg": status_msg
+        "status": "success",
+        "telegram": tg_status,
+        "data": result
     }
 
 @app.get("/api/calculate")
 async def get_quote(price: float, scale: float):
-    # Этот запрос будет вызывать твой 3D интерфейс
-    # Убедись, что метод calculate_quote добавлен в gateway_bridge.py!
+    # Убедись, что метод calculate_quote есть в gateway_bridge.py
     quote = await bridge.calculate_quote(price, scale)
     return quote
