@@ -1,5 +1,10 @@
-import asyncio
+import os
+import sys
 from fastapi import FastAPI
+
+# Эта магия помогает Python найти папку core
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from core.gateway.gateway_bridge import GatewayBridge, FinancialIntent
 
 app = FastAPI()
@@ -7,7 +12,6 @@ bridge = GatewayBridge()
 
 @app.get("/api/process")
 async def process_request(query: str = "check"):
-    # Тестовое "намерение" (Intent)
     intent = FinancialIntent(
         action="check_balance", 
         amount=0, 
@@ -16,6 +20,3 @@ async def process_request(query: str = "check"):
     )
     result = await bridge.execute(intent)
     return {"query": query, "result": result}
-
-if __name__ == "__main__":
-    asyncio.run(start_platform())
