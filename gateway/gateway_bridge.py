@@ -42,3 +42,16 @@ class GatewayBridge:
             except Exception as e:
                 print(f"Ошибка сети: {e}")
             return "0"
+
+async def calculate_quote(self, base_price: float, global_scale: float):
+        """
+        Рассчитывает стоимость продукта в зависимости от его глобальности.
+        global_scale: от 1 (локальный) до 10 (мировой)
+        """
+        total = base_price * (1 + (global_scale * 0.5))
+        return {
+            "base_usd": base_price,
+            "global_index": global_scale,
+            "final_price_usd": total,
+            "ton_equivalent": total / 5.2  # Примерный курс TON
+        }
