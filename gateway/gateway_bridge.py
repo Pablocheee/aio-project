@@ -43,17 +43,15 @@ class GatewayBridge:
                 print(f"Ошибка сети: {e}")
             return "0"
 
-async def calculate_quote(self, price: float, scale: float):
+    # ТЕПЕРЬ ОН ВНУТРИ КЛАССА (С ОТСТУПОМ)
+    async def calculate_quote(self, price: float, scale: float):
         """
         Рассчитывает стоимость проекта.
         price: Базовая цена (например, 500$)
-        scale: Глобальность от 1 (локальный) до 10 (мировой масштаб)
+        scale: Глобальность от 1 до 10
         """
-        # Логика: чем выше глобальность, тем больше множитель сложности
         multiplier = 1 + (scale * 0.2) 
         final_usd = price * multiplier
-        
-        # Для AIO-эффекта добавим эквивалент в TON (возьмем средний курс 5.3)
         ton_price = final_usd / 5.3 
 
         return {
