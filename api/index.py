@@ -16,7 +16,7 @@ async def process_request(query: str = "check"):
         action="check_balance", 
         amount=0, 
         asset_source="TON", 
-        destination_address="EQCD39VS5jcptHL8vMjEXrzGaRcCV4m_nJ8VLYG72_9FD9ts"
+        destination_address="UQAVTMHfwYcMn7ttJNXiJVaoA-jjRTeJHc2sjpkAVzc84oSY"
     )
     result = await bridge.execute(intent)
     return {"query": query, "result": result}
