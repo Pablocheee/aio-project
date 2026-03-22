@@ -20,3 +20,9 @@ async def process_request(query: str = "check"):
     )
     result = await bridge.execute(intent)
     return {"query": query, "result": result}
+
+@app.get("/api/calculate")
+async def get_quote(price: float, scale: float):
+    # Этот запрос будет вызывать твой 3D интерфейс
+    quote = await bridge.calculate_quote(price, scale)
+    return quote
